@@ -1,0 +1,446 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>联系人列表 (Contact List)</title>
+  <style>
+    /* General Body Styling */
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f0f2f5;
+        color: #333;
+    }
+
+    /* --- Header Section Styling --- */
+    .header {
+        background-color: #fff;
+        padding: 15px 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .header-top-row,
+    .header-bottom-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    /* User Profile */
+    .user-profile {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+    }
+    .user-profile img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 10px;
+        border: 2px solid #007bff;
+        object-fit: cover;
+    }
+    .user-info .location-city {
+        font-weight: bold;
+        color: #555;
+        display: block;
+    }
+    .user-info .change-city-link {
+        font-size: 0.85em;
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    /* Weather Display */
+    .weather-display {
+        display: flex;
+        gap: 10px;
+        flex-grow: 1;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    .weather-day {
+        text-align: center;
+        padding: 5px 8px;
+        border: 1px solid #eee;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        flex-shrink: 0;
+        min-width: 90px;
+    }
+    .weather-day .date {
+        font-weight: bold;
+        font-size: 0.9em;
+        color: #333;
+    }
+    .weather-day .temp {
+        font-size: 0.8em;
+        color: #666;
+    }
+
+    /* Search Bar */
+    .search-bar {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        max-width: 500px;
+        gap: 10px;
+    }
+    .search-bar input {
+        flex-grow: 1;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1em;
+    }
+    .search-bar select {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1em;
+        background-color: white;
+    }
+    .filter-button {
+        padding: 8px 15px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+    .filter-button:hover {
+        background-color: #0056b3;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        flex-shrink: 0;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+    .action-button-svg {
+        background-color: #007bff;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    /* --- Main Content Styling --- */
+    .loading-message, #errorMessage {
+        text-align: center;
+        margin: 20px;
+    }
+
+    /* Table Styling */
+    .table-container {
+        width: 100%;
+        overflow-x: auto;
+        margin-bottom: 20px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+        min-width: 600px;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 12px 15px;
+        text-align: left;
+    }
+    th {
+        background-color: #007bff;
+        color: white;
+    }
+    tbody tr:nth-child(even) {
+        background-color: #f8f8f8;
+    }
+    tbody tr:hover {
+        background-color: #f0f0f0;
+    }
+
+    /* Action Buttons in Table */
+    .action-button {
+        padding: 6px 12px;
+        margin: 2px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9em;
+        color: white;
+    }
+    .details-button { background-color: #28a745; }
+    .block-button { background-color: #dc3545; }
+    .add-matter-button { background-color: #17a2b8; }
+
+    /* Mobile Card View */
+    .mobile-contact-card {
+        display: none;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        margin: 10px;
+        padding: 15px;
+        position: relative;
+    }
+    .mobile-contact-info {
+        margin-bottom: 10px;
+    }
+    .mobile-contact-name {
+        font-weight: bold;
+        font-size: 1.1em;
+    }
+    .mobile-contact-gender {
+        display: inline-block;
+        margin-left: 10px;
+        font-size: 0.9em;
+        color: #666;
+    }
+    .mobile-contact-phone {
+        color: #007bff;
+    }
+    .mobile-contact-actions {
+        display: flex;
+        gap: 5px;
+        margin-top: 10px;
+    }
+    .mobile-contact-actions button {
+        flex: 1;
+        padding: 8px;
+        font-size: 0.8em;
+    }
+
+    /* Dropdown for more actions */
+    .mobile-action-dropdown {
+        position: relative;
+        display: inline-block;
+    }
+    .mobile-dropdown-btn {
+        background-color: #6c757d;
+        color: white;
+        padding: 8px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        width: 100%;
+    }
+    .mobile-dropdown-content {
+        display: none;
+        position: absolute;
+        right: 0;
+        background-color: #f9f9f9;
+        min-width: 120px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        z-index: 1;
+        border-radius: 4px;
+    }
+    .mobile-dropdown-content button {
+        color: black;
+        padding: 8px 12px;
+        text-decoration: none;
+        display: block;
+        width: 100%;
+        text-align: left;
+        border: none;
+        background: none;
+    }
+    .mobile-dropdown-content button:hover {
+        background-color: #ddd;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .header {
+            padding: 10px;
+        }
+        .header-top-row,
+        .header-bottom-row {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 10px;
+        }
+        .user-profile, .weather-display, .search-bar, .action-buttons {
+            width: 100%;
+        }
+        .weather-display {
+            justify-content: space-between;
+        }
+        .weather-day {
+            flex: 1;
+            min-width: unset;
+        }
+        .search-bar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .action-buttons {
+            justify-content: space-around;
+        }
+        table {
+            display: none;
+        }
+        .mobile-contact-card {
+            display: block;
+        }
+    }
+
+    @media (min-width: 769px) {
+        .mobile-contact-card {
+            display: none !important;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .weather-day .date {
+            font-size: 0.8em;
+        }
+        .weather-day .temp {
+            font-size: 0.7em;
+        }
+        .action-button-svg {
+            width: 36px;
+            height: 36px;
+        }
+    }
+  </style>
+</head>
+<body>
+<div class="header">
+  <div class="header-top-row">
+    <div class="user-profile">
+      <img src="./images/1.jpg" alt="User Photo">
+      <div class="user-info">
+        <span class="location-city">济州 (Jeju)</span> <a href="#" class="change-city-link">[更换城市 (Change City)]</a>
+      </div>
+    </div>
+
+    <div class="weather-display">
+      <div class="weather-day">
+        <div class="date">今天12月15</div>
+        <div class="temp">晴</div>
+        <div class="temp">-14~0°C</div>
+      </div>
+      <div class="weather-day">
+        <div class="date">明天12月16</div>
+        <div class="temp">晴转多云</div>
+        <div class="temp">-15~1°C</div>
+      </div>
+      <div class="weather-day">
+        <div class="date">后天12月17</div>
+        <div class="temp">多云转晴</div>
+        <div class="temp">-13~2°C</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="header-bottom-row">
+    <form id="contactFilterForm" class="search-bar">
+      <input type="text" id="searchText" placeholder="姓名或电话" value="${param.searchText}">
+
+      <select id="genderFilter">
+        <option value="all" ${param.genderFilter == 'all' ? 'selected' : ''}>全部</option>
+        <option value="male" ${param.genderFilter == 'male' ? 'selected' : ''}>男</option>
+        <option value="female" ${param.genderFilter == 'female' ? 'selected' : ''}>女</option>
+      </select>
+
+      <button type="button" id="filterButton" class="filter-button">筛选</button>
+    </form>
+
+    <div class="action-buttons">
+      <button class="action-button-svg" id="addContactBtn" title="添加联系人">
+        <svg fill="white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+          <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+        </svg>
+      </button>
+      <button class="action-button-svg" id="blockListBtn" title="黑名单">
+        <svg fill="white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15H9v-2h2v2zm0-4H9V7h2v6z"/>
+        </svg>
+      </button>
+      <button class="action-button-svg" id="contactMatterBtn" title="联系人事项">
+        <svg fill="white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+          <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<h1 style="display: none;">联系人列表</h1>
+
+<div class="loading-message" id="loadingMessage"></div>
+
+<p id="errorMessage"></p>
+
+<div class="table-container">
+  <table id="contactTable">
+    <thead>
+      <tr>
+        <th>姓名</th>
+        <th>性别</th>
+        <th>电话</th>
+        <th>操作</th>
+        <th>操作</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+        <tbody id="contactTableBody">
+          <c:forEach var="contact" items="${contacts}">
+            <tr data-ctid="${contact[3]}">
+              <td>${contact[0]}</td>  <!-- Name -->
+              <td>${contact[1]}</td>  <!-- Gender -->
+              <td>${contact[2]}</td>  <!-- Phone -->
+              <td><button class="action-button details-button">详情</button></td>
+              <td><button class="action-button block-button">拉黑</button></td>
+              <td><button class="action-button add-matter-button">添加事项</button></td>
+            </tr>
+          </c:forEach>
+        </tbody>
+  </table>
+</div>
+
+<!-- Mobile Contact Cards Container -->
+<div id="mobileContactList">
+    <c:forEach var="contact" items="${contacts}">
+      <div class="mobile-contact-card" data-ctid="${contact[3]}">
+        <div class="mobile-contact-info">
+            <span class="mobile-contact-name">${contact[0]}</span>
+            <span class="mobile-contact-gender">${contact[1]}</span>
+            <div class="mobile-contact-phone">${contact[2]}</div>
+        </div>
+          <div class="mobile-contact-actions">
+            <button class="action-button details-button" style="flex: 2;">详情</button>
+            <div class="mobile-action-dropdown">
+              <button class="mobile-dropdown-btn">更多操作</button>
+              <div class="mobile-dropdown-content">
+                <button class="block-button">拉黑</button>
+                <button class="add-matter-button">添加事项</button>
+              </div>
+            </div>
+          </div>
+      </div>
+    </c:forEach>
+</div>
+
+<script src="js/ContactList.js"></script>
+</body>
+</html>
