@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
                 if (data.status === 'success') {
                     // ✅ Login successful → redirect to contact list
-                    window.location.href = 'ContactList.jsp';
+                    window.location.href = 'ContactList.html';
                 }
             })
             .catch(err => {

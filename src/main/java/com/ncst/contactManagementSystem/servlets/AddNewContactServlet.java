@@ -29,7 +29,7 @@ public class AddNewContactServlet extends HttpServlet {
         String userId = (session != null) ? (String) session.getAttribute("userId") : null;
         if (userId == null) {
 //            System.out.println("Empty USer");
-            response.sendRedirect("Login.jsp");
+            response.sendRedirect("Login.html");
             return;
         }
 
@@ -52,27 +52,71 @@ public class AddNewContactServlet extends HttpServlet {
             String birthDate = request.getParameter("birthDate");
             String phoneNumber = request.getParameter("phoneNumber");
 
-//            System.out.println("gender:" + gender);
-//            System.out.println(newCtId);
+            System.out.println("gender:" + gender);
+            System.out.println(newCtId);
 
             String[] contactInfo = {
                     name, address, postalCode, qq, wechat,
                     email, gender, birthDate, phoneNumber
             };
 
-            // 4. Store image file
+//            // 4. Store image file
+//            Part photoPart = request.getPart("photo");
+//            String submittedFileName = getFileName(photoPart);
+//
+//            String finalFileName;
+//            if (submittedFileName == null || submittedFileName.isEmpty()) {
+//                System.out.println("Use default image");
+//                finalFileName = "default.jpg";
+//            } else {
+//                finalFileName = submittedFileName;
+//                File userDir = new File(IMAGE_ROOT + userId);
+//                if (!userDir.exists()) userDir.mkdirs();
+//                photoPart.write(userDir.getAbsolutePath() + File.separator + finalFileName);
+//            }
             Part photoPart = request.getPart("photo");
-            String submittedFileName = getFileName(photoPart);
+            String submittedFileName = (photoPart == null) ? null : getFileName(photoPart);
 
             String finalFileName;
+            File userDir = new File(IMAGE_ROOT + userId);
+            if (!userDir.exists()) userDir.mkdirs();
+
             if (submittedFileName == null || submittedFileName.isEmpty()) {
+                System.out.println("Use default image");
+
+                // 定义默认图片的路径（服务器上已有的默认图片）
+                File defaultImageFile = new File(IMAGE_ROOT + "default.jpg");
+
+                // 给用户目录里的默认图片命名，最好带上前缀，避免和其他用户冲突
                 finalFileName = "default.jpg";
+                File targetFile = new File(userDir, finalFileName);
+
+                // 拷贝默认图片到用户目录
+                try (InputStream in = new FileInputStream(defaultImageFile);
+                     OutputStream out = new FileOutputStream(targetFile)) {
+
+                    byte[] buffer = new byte[1024];
+                    int len;
+                    while ((len = in.read(buffer)) != -1) {
+                        out.write(buffer, 0, len);
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    // 如果拷贝失败，可根据需要处理异常
+                }
+
             } else {
                 finalFileName = submittedFileName;
-                File userDir = new File(IMAGE_ROOT + userId);
-                if (!userDir.exists()) userDir.mkdirs();
-                photoPart.write(userDir.getAbsolutePath() + File.separator + finalFileName);
+                try {
+                    photoPart.write(userDir.getAbsolutePath() + File.separator + finalFileName);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+
+
+            System.out.println("Store image successfully");
 
 
 

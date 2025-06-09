@@ -1,0 +1,60 @@
+<!--<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>联系人事项提醒 (Contact Matter Reminder)</title>
+    <link rel="stylesheet" href="css/Matter.css"/>
+</head>
+<body>
+<div class="header">
+    <h1>联系人事项提醒 (Contact Matter Reminder)</h1>
+    <div class="controls">
+        <div class="search-container">
+            <input type="text" id="matterSearch" placeholder="搜索 (Search by name or event)">
+            <button type="button">
+                <svg fill="white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="status-filter">
+            <label for="matterStatusFilter">状态 (Status):</label>
+            <select id="matterStatusFilter">
+                <option value="all">全部 (All)</option>
+                <option value="pending">待完成 (To be done)</option>
+                <option value="completed">完成 (Completed)</option>
+                <option value="cancelled">取消 (Cancelled)</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="loading-message" id="loadingMessage">加载事项中... (Loading matters...)</div>
+<p id="errorMessage"></p>
+
+<table id="matterTable">
+    <thead>
+    <tr>
+        <th>姓名 (Name)</th>
+        <th id="dateHeader" class="sortable">时间 (Date)</th>
+        <th>事件 (Event)</th>
+        <th>操作 (Operations)</th>
+        <th>操作 (Operations)</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<div class="pagination-controls">
+    <button id="prevPageBtn" disabled>上一页 (Previous)</button>
+    <span id="pageInfo">第 1 页 (Page 1)</span>
+    <button id="nextPageBtn">下一页 (Next)</button>
+</div>
+
+<script src="js/contactMatter.js"></script>
+</body>
+</html>

@@ -152,6 +152,8 @@ function renderAllContacts(contacts) {
  */
 function renderTableContacts(contacts) {
 //    console.log("start render table contacts");
+    contactTableBody.innerHTML = '';
+
     if (!contactTableBody) return;
 
     if (!contacts || contacts.length === 0) {
@@ -162,16 +164,34 @@ function renderTableContacts(contacts) {
         return;
     }
 
-    contactTableBody.innerHTML = contacts.map(contact => `
-        <tr data-ctid="${contact[3]}">
-            <td>${contact[0]}</td>
-            <td>${contact[1]}</td>
-            <td>${contact[2]}</td>
+    // contactTableBody.innerHTML = contacts.map(contact => `
+    //     <tr data-ctid="${contact[3]}">
+    //         <td>${contact[0]}</td>
+    //         <td>${contact[1]}</td>
+    //         <td>${contact[2]}</td>
+    //         <td><button class="action-button details-button">详情</button></td>
+    //         <td><button class="action-button block-button">拉黑</button></td>
+    //         <td><button class="action-button add-matter-button">添加事项</button></td>
+    //     </tr>
+    // `).join('');
+
+    contacts.forEach(contact => {
+        const [name, gender, phone, ctId] = contact;
+
+        const tr = document.createElement('tr');
+        tr.dataset.ctid = ctId;
+
+        tr.innerHTML = `
+            <td>${name}</td>
+            <td>${gender}</td>
+            <td>${phone}</td>
             <td><button class="action-button details-button">详情</button></td>
             <td><button class="action-button block-button">拉黑</button></td>
             <td><button class="action-button add-matter-button">添加事项</button></td>
-        </tr>
-    `).join('');
+        `;
+
+        contactTableBody.appendChild(tr);
+    });
 }
 
 /**
@@ -180,6 +200,8 @@ function renderTableContacts(contacts) {
  */
 function renderMobileContacts(contacts) {
 //    console.log("start render mobile contacts");
+    mobileContactList.innerHTML = '';
+
     if (!mobileContactList) return;
 
     if (!contacts || contacts.length === 0) {
@@ -190,25 +212,53 @@ function renderMobileContacts(contacts) {
         return;
     }
 
-    mobileContactList.innerHTML = contacts.map(contact => `
-        <div class="mobile-contact-card" data-ctid="${contact[3]}">
-            <div class="mobile-contact-info">
-                <span class="mobile-contact-name">${contact[0]}</span>
-                <span class="mobile-contact-gender">${contact[1]}</span>
-                <div class="mobile-contact-phone">${contact[2]}</div>
+    // mobileContactList.innerHTML = contacts.map(contact => `
+    //     <div class="mobile-contact-card" data-ctid="${contact[3]}">
+    //         <div class="mobile-contact-info">
+    //             <span class="mobile-contact-name">${contact[0]}</span>
+    //             <span class="mobile-contact-gender">${contact[1]}</span>
+    //             <div class="mobile-contact-phone">${contact[2]}</div>
+    //         </div>
+    //         <div class="mobile-contact-actions">
+    //             <button class="action-button details-button" style="flex: 2;">详情</button>
+    //             <div class="mobile-action-dropdown">
+    //                 <button class="mobile-dropdown-btn">更多操作</button>
+    //                 <div class="mobile-dropdown-content">
+    //                     <button class="block-button">拉黑</button>
+    //                     <button class="add-matter-button">添加事项</button>
+    //                 </div>
+    //             </div>
+    //         </div>
+    //     </div>
+    // `).join('');
+
+    contacts.forEach(contact => {
+        const [name, gender, phone, ctId] = contact;
+
+        const div = document.createElement('div');
+        div.className = 'mobile-contact-card';
+        div.dataset.ctid = ctId;
+
+        div.innerHTML = `
+          <div class="mobile-contact-info">
+              <span class="mobile-contact-name">${name}</span>
+              <span class="mobile-contact-gender">${gender}</span>
+              <div class="mobile-contact-phone">${phone}</div>
+          </div>
+          <div class="mobile-contact-actions">
+            <button class="action-button details-button" style="flex: 2;">详情</button>
+            <div class="mobile-action-dropdown">
+              <button class="mobile-dropdown-btn">更多操作</button>
+              <div class="mobile-dropdown-content">
+                <button class="block-button">拉黑</button>
+                <button class="add-matter-button">添加事项</button>
+              </div>
             </div>
-            <div class="mobile-contact-actions">
-                <button class="action-button details-button" style="flex: 2;">详情</button>
-                <div class="mobile-action-dropdown">
-                    <button class="mobile-dropdown-btn">更多操作</button>
-                    <div class="mobile-dropdown-content">
-                        <button class="block-button">拉黑</button>
-                        <button class="add-matter-button">添加事项</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `).join('');
+          </div>
+        `;
+
+        mobileContactList.appendChild(div);
+    });
 
     initMobileDropdowns();
 }
@@ -254,7 +304,7 @@ function attachButtonListeners() {
         button.addEventListener('click', function() {
             const ctId = getCtIdFromButton(button);
             if (ctId) {
-                window.location.href = `DetailCt.jsp?ctId=${encodeURIComponent(ctId)}`;
+                window.location.href = `DetailCt.html?ctId=${encodeURIComponent(ctId)}`;
             }
         });
     });
@@ -287,7 +337,7 @@ function attachButtonListeners() {
         button.addEventListener('click', function() {
             const ctId = getCtIdFromButton(button);
             if (ctId) {
-                window.location.href = `AddMatter.jsp?ctId=${encodeURIComponent(ctId)}`;
+                window.location.href = `AddMatter.html?ctId=${encodeURIComponent(ctId)}`;
             }
         });
     });
@@ -298,7 +348,7 @@ function attachButtonListeners() {
  */
 function handleAddContact() {
     try {
-        window.location.href = 'addNewCt.jsp';
+        window.location.href = 'addNewCt.html';
     } catch (error) {
         console.error('Failed to navigate to add contact page:', error);
         showError('无法打开添加联系人页面');
@@ -310,7 +360,7 @@ function handleAddContact() {
  */
 function handleBlockList() {
     try {
-        window.location.href = 'BlockCtList.jsp';
+        window.location.href = 'BlockCtList.html';
     } catch (error) {
         console.error('Failed to navigate to block list:', error);
         showError('无法打开黑名单页面');
@@ -322,7 +372,7 @@ function handleBlockList() {
  */
 function handleContactMatter() {
     try {
-        window.location.href = 'Matter.jsp';
+        window.location.href = 'Matter.html';
     } catch (error) {
         console.error('Failed to navigate to matters page:', error);
         showError('无法打开事项管理页面');

@@ -1,0 +1,41 @@
+<!--<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>添加联系人事项 (Add Contact Matter)</title>
+    <link rel="stylesheet" href="css/AddMatter.css"/>
+</head>
+<body>
+<div class="container">
+    <h1>联系人事项添加 (Add Contact Matter)</h1>
+
+    <div class="contact-profile-display">
+        <img id="contactPhoto" src="https://via.placeholder.com/80/CCCCCC/FFFFFF?text=?" alt="Contact Photo">
+        <span id="contactName"></span>
+    </div>
+
+    <form id="addMatterForm">
+        <input type="hidden" id="contactId" name="contactId">
+
+        <div class="form-group">
+            <label for="matterDate"><i class="input-icon">&#128197;</i> 日期 (Date):</label>
+            <input type="date" id="matterDate" name="matterDate" required>
+        </div>
+
+        <div class="form-group">
+            <label for="matterDescription"><i class="input-icon">&#9993;</i> 事件 (Event):</label>
+            <input type="text" id="matterDescription" name="matterDescription" placeholder="请输入事件描述" required>
+        </div>
+
+        <button type="submit" class="add-button">添加 (Add)</button>
+    </form>
+
+    <p id="errorMessage"></p>
+    <p id="successMessage"></p>
+</div>
+
+<script src="js/addMatter.js"></script>
+</body>
+</html>

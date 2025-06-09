@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (response.ok) {
                 console.log("success response okay");
                 // Redirect to contact list
-                window.location.href = 'ContactList.jsp';
+                window.location.href = 'ContactList.html';
             } else {
                 return response.text().then(msg => {
                     throw new Error(msg);

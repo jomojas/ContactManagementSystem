@@ -1,0 +1,205 @@
+ /* General Body Styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f0f2f5;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.container {
+    background-color: #fff;
+    padding: 25px 35px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+h1 {
+    text-align: center;
+    color: #007bff;
+    margin-bottom: 30px;
+    font-size: 1.8em;
+}
+
+/* Profile Photo Display/Upload */
+.profile-photo-upload {
+    text-align: center;
+    margin-bottom: 30px;
+}
+.profile-photo-upload label {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+}
+.profile-photo-upload img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #007bff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease-in-out;
+}
+.profile-photo-upload img:hover {
+    transform: scale(1.05);
+}
+.profile-photo-upload input[type="file"] {
+    display: none; /* Hide the default file input */
+}
+/* Optional: Add an overlay icon for changing photo */
+.profile-photo-upload label::after {
+    content: '&#x21bb;'; /* Unicode for refresh/upload icon */
+    font-size: 1.5em;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    padding: 5px;
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+}
+.profile-photo-upload label:hover::after {
+    opacity: 1;
+}
+
+
+/* Form Grid Layout */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Single column by default */
+    gap: 20px 25px;
+}
+
+@media (min-width: 600px) {
+    .form-grid {
+        grid-template-columns: 1fr 1fr; /* Two columns */
+    }
+    .form-group.full-width {
+        grid-column: span 2;
+    }
+    .form-group.gender-birth {
+        grid-column: span 2;
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+    }
+    .form-group.gender-birth > div {
+        flex: 1;
+        min-width: 150px;
+    }
+}
+
+/* Form Group Styling */
+.form-group {
+    position: relative;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #555;
+    font-size: 0.95em;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="tel"],
+.form-group input[type="date"],
+.form-group select { /* Removed textarea from here */
+    width: 100%;
+    padding: 10px 12px 10px 40px; /* Left padding for icon */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 1em;
+    transition: border-color 0.2s;
+}
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+/* Required field indicator */
+.form-group label.required::after {
+    content: '*';
+    color: red;
+    margin-left: 4px;
+}
+
+/* Input Icons */
+.form-group .input-icon {
+    position: absolute;
+    left: 12px;
+    top: 38px; /* Adjust based on label height */
+    color: #888;
+    font-size: 1.2em;
+}
+/* No specific adjustment for textarea icon needed anymore */
+.form-group.gender-birth > div .input-icon {
+    top: 38px;
+}
+
+
+/* Buttons Section */
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 40px;
+}
+
+.action-button {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    min-width: 120px;
+}
+
+.update-button {
+    background-color: #007bff; /* Blue for Update */
+    color: white;
+}
+.update-button:hover {
+    background-color: #0056b3;
+}
+
+.matter-button {
+    background-color: #28a745; /* Green for Matter */
+    color: white;
+}
+.matter-button:hover {
+    background-color: #218838;
+}
+
+#loadingMessage, #errorMessage, #successMessage {
+    text-align: center;
+    margin-top: 20px;
+    font-weight: bold;
+}
+#errorMessage {
+    color: red;
+}
+#successMessage {
+    color: green;
+}
