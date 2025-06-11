@@ -1,83 +1,110 @@
-<!--<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>黑名单 (Blacklist)</title>
-    <link rel="stylesheet" href="css/BlockCtList.css"/>
+    <title>黑名单列表 (Block List)</title>
+    <link rel="stylesheet" href="css/BlockCtList.css" />
 </head>
 <body>
 <div class="header">
     <div class="header-top-row">
         <div class="user-profile">
-            <img src="https://via.placeholder.com/50" alt="User Photo">
+            <img id="userProfilePhoto" src="image?user=default&file=default.jpg" alt="User Photo">
             <div class="user-info">
-                <span class="location-city">济州 (Jeju)</span>
-                <a href="#" class="change-city-link">[更换城市 (Change City)]</a>
+                <span class="location-city">济州 (Jeju)</span> <a href="#" class="change-city-link">[更换城市 (Change City)]</a>
             </div>
         </div>
 
         <div class="weather-display">
             <div class="weather-day">
-                <div class="date">今天12月15 (Today Dec 15)</div>
-                <div class="temp">晴 (Clear)</div>
+                <div class="date">今天12月15</div>
+                <div class="temp">晴</div>
                 <div class="temp">-14~0°C</div>
             </div>
             <div class="weather-day">
-                <div class="date">明天12月16 (Tomorrow Dec 16)</div>
-                <div class="temp">晴转多云 (Clear to Cloudy)</div>
-                <div class="temp">-15°C~1°C</div>
+                <div class="date">明天12月16</div>
+                <div class="temp">晴转多云</div>
+                <div class="temp">-15~1°C</div>
             </div>
             <div class="weather-day">
-                <div class="date">后天12月17 (Day after tomorrow Dec 17)</div>
-                <div class="temp">多云转晴 (Cloudy to Clear)</div>
-                <div class="temp">-13°C~-2°C</div>
+                <div class="date">后天12月17</div>
+                <div class="temp">多云转晴</div>
+                <div class="temp">-13~2°C</div>
             </div>
         </div>
     </div>
 
     <div class="header-bottom-row">
-        <div class="search-bar">
-            <input type="text" id="searchContact" placeholder="搜索 (Search)">
-            <button type="button">
-                <svg fill="white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-                </svg>
-            </button>
-        </div>
+        <form id="contactFilterForm" class="search-bar">
+            <input type="text" id="searchText" placeholder="姓名或电话">
 
-        <div class="gender-selector">
-            <label for="genderFilter">性别 (Gender):</label>
             <select id="genderFilter">
-                <option value="all">全部 (All)</option>
-                <option value="male">男 (Male)</option>
-                <option value="female">女 (Female)</option>
+                <option value="all">全部</option>
+                <option value="male">男</option>
+                <option value="female">女</option>
             </select>
-        </div>
+
+            <button type="button" id="filterButton" class="filter-button">筛选</button>
+        </form>
 
     </div>
 </div>
 
-<h1 style="text-align: center; color: #007bff; margin-bottom: 20px;">黑名单 (Blacklist)</h1>
+<h1 style="display: none;">黑名单列表</h1>
 
-<div class="loading-message" id="loadingMessage">Loading contacts...</div>
+
+<div class="table-container">
+    <table id="contactTable">
+        <thead>
+        <tr>
+            <th>姓名</th>
+            <th>性别</th>
+            <th>电话</th>
+            <th>操作</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody id="contactTableBody">
+        <!--      <c:forEach var="contact" items="${contacts}">-->
+        <!--        <tr data-ctid="${contact[3]}">-->
+        <!--          <td>${contact[0]}</td>  &lt;!&ndash; Name &ndash;&gt;-->
+        <!--          <td>${contact[1]}</td>  &lt;!&ndash; Gender &ndash;&gt;-->
+        <!--          <td>${contact[2]}</td>  &lt;!&ndash; Phone &ndash;&gt;-->
+        <!--          <td><button class="action-button details-button">详情</button></td>-->
+        <!--          <td><button class="action-button block-button">还原</button></td>-->
+        <!--        </tr>-->
+        <!--      </c:forEach>-->
+        </tbody>
+    </table>
+</div>
+
+<!-- Mobile Contact Cards Container -->
+<div id="mobileContactList">
+    <!--    <c:forEach var="contact" items="${contacts}">-->
+    <!--      <div class="mobile-contact-card" data-ctid="${contact[3]}">-->
+    <!--        <div class="mobile-contact-info">-->
+    <!--            <span class="mobile-contact-name">${contact[0]}</span>-->
+    <!--            <span class="mobile-contact-gender">${contact[1]}</span>-->
+    <!--            <div class="mobile-contact-phone">${contact[2]}</div>-->
+    <!--        </div>-->
+    <!--          <div class="mobile-contact-actions">-->
+    <!--            <button class="action-button details-button" style="flex: 2;">详情</button>-->
+    <!--            <div class="mobile-action-dropdown">-->
+    <!--              <button class="mobile-dropdown-btn">更多操作</button>-->
+    <!--              <div class="mobile-dropdown-content">-->
+    <!--                <button class="block-button">还原</button>-->
+    <!--              </div>-->
+    <!--            </div>-->
+    <!--          </div>-->
+    <!--      </div>-->
+    <!--    </c:forEach>-->
+</div>
+
+<div class="loading-message" id="loadingMessage"></div>
+
 <p id="errorMessage"></p>
 
-<table id="contactTable">
-    <thead>
-    <tr>
-        <th>姓名 (Name)</th>
-        <th id="genderHeader" class="sortable">性别 (Gender)</th>
-        <th>电话 (Phone Number)</th>
-        <th>操作 (Operations)</th>
-        <th>操作 (Operations)</th>
-    </tr>
-    </thead>
-    <tbody>
-    </tbody>
-</table>
-
-<script src="js/blackCtList.js"></script>
+<script src="js/BlockCtList.js"></script>
 </body>
 </html>

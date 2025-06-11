@@ -9,8 +9,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-@WebServlet("/contacts")
-public class ContactServlet extends HttpServlet {
+@WebServlet("/blockedContacts")
+public class BlockContactListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
@@ -28,17 +28,18 @@ public class ContactServlet extends HttpServlet {
         }
 
         try {
-            List<String[]> contacts;
+            List<String[]> blockedContacts;
 
             if (hasFilterParameters(request)) {
                 String searchText = request.getParameter("searchText");
                 String genderFilter = request.getParameter("genderFilter");
-                contacts = DBUtil.getFilteredContact(userId, searchText, genderFilter, 0);
+                System.out.println(genderFilter);
+                blockedContacts = DBUtil.getFilteredContact(userId, searchText, genderFilter, 1);
             } else {
-                contacts = DBUtil.getContact(userId, 1, 100, 0); // all contacts
+                blockedContacts = DBUtil.getContact(userId, 1, 100, 1); // all blocked contacts
             }
 
-            sendJsonResponse(response, contacts);
+            sendJsonResponse(response, blockedContacts);
 
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

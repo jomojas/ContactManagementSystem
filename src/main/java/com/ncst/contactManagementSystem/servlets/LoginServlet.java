@@ -5,11 +5,14 @@ import com.ncst.contactManagementSystem.util.DBUtil;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
+
+    private static final String IMAGE_ROOT = "D:/IntellijIDEA/project/images/";
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -41,9 +44,20 @@ public class LoginServlet extends HttpServlet {
 //            response.setContentType("application/json;charset=UTF-8");
 
             if (storedPassword != null && storedPassword.equals(password)) {
-                HttpSession session = request.getSession();
+                // 1. Invalidate old session if any
+                HttpSession oldSession = request.getSession(false);
+                if (oldSession != null) {
+                    oldSession.invalidate(); // kill the old session
+                }
+
+                // 2. Create a new session
+                HttpSession session = request.getSession(true); // start fresh
                 session.setAttribute("userId", userId);
-                session.setMaxInactiveInterval(30 * 60); // 30分钟
+                session.setMaxInactiveInterval(30 * 60); // 30 minutes
+
+                // 3. Create image folder for current user
+                File userDir = new File(IMAGE_ROOT + userId);
+                userDir.mkdir();  // Only creates the directory if it doesn't exist
 
                 // 登录成功
                 response.getWriter().write("{\"status\":\"success\"}");

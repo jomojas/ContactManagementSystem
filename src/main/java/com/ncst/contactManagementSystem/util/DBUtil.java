@@ -150,6 +150,7 @@ public class DBUtil {
             stmt.setString(1, picName);
             stmt.setString(2, ctId);
             stmt.setString(3, picId);
+            System.out.println("Updating contact picture successfully");
             return stmt.executeUpdate() > 0;
         }
     }
@@ -209,20 +210,25 @@ public class DBUtil {
         return list;
     }
 
-    // 16. Get all matters for a contact
-    public static List<String[]> getMatterContact(String ctId, int status) throws SQLException {
-        String sql = "SELECT ct_id, matter_time, matter FROM contact_matter WHERE ct_id = ? AND matter_delete = ?";
+    // 16. Get all matters of a status
+    public static List<String[]> getMatter(int status) throws SQLException {
+        String sql = "SELECT ct_id, matter_time, matter, matter_id FROM contact_matter WHERE matter_delete = ?";
         List<String[]> list = new ArrayList<>();
         try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, ctId);
-            stmt.setInt(2, status);
+            stmt.setInt(1, status);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                list.add(new String[]{rs.getString(1), rs.getString(2), rs.getString(3)});
+                list.add(new String[]{
+                        rs.getString("ct_id"),
+                        rs.getString("matter_time"),
+                        rs.getString("matter"),
+                        rs.getString("matter_id")
+                });
             }
         }
         return list;
     }
+
 
     // 17. Delete matter
     public static boolean deleteMatter(String matterId) throws SQLException {
@@ -230,6 +236,15 @@ public class DBUtil {
         try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, matterId);
             return stmt.executeUpdate() > 0;
+        }
+    }
+
+    // Finish Matter
+    public static void finishMatter(String matterId) throws SQLException {
+        String sql = "UPDATE contact_matter SET matter_delete = 2 WHERE matter_id = ?";
+        try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, matterId);
+            stmt.executeUpdate();
         }
     }
 
@@ -255,14 +270,20 @@ public class DBUtil {
     }
 
     // Get Filtered Contacts according to user's condition
-    public static List<String[]> getFilteredContact(String userId, String searchText, String genderFilter)
+    public static List<String[]> getFilteredContact(String userId, String searchText, String genderFilter, int status)
             throws SQLException {
 
 //        System.out.println("DBUtil");
 //        System.out.println(searchText);
 
-        String sql = "SELECT ct_name, ct_mf, ct_phone, ct_id FROM contact_info " +
-                "WHERE user_id = ? AND ct_delete = 0";
+        String sql = null;
+        if(status == 0) {
+             sql = "SELECT ct_name, ct_mf, ct_phone, ct_id FROM contact_info " +
+                    "WHERE user_id = ? AND ct_delete = 0";
+        } else if(status == 1) {
+             sql = "SELECT ct_name, ct_mf, ct_phone, ct_id FROM contact_info " +
+                    "WHERE user_id = ? AND ct_delete = 1";
+        }
 
         List<String> params = new ArrayList<>();
         params.add(userId);
@@ -279,6 +300,7 @@ public class DBUtil {
             sql += " AND ct_mf = ?";
             params.add(genderFilter.equals("male") ? "男" : "女");
         }
+
 
 //        // Debug output
 //        System.out.println("Final SQL: " + sql);
@@ -305,4 +327,34 @@ public class DBUtil {
             return contacts;
         }
     }
+
+    // Get pic_id of ct_id
+    public static String getContactPicID(String ctId) throws SQLException {
+        String sql = "SELECT pic_id FROM contact_pic WHERE ct_id = ?";
+        try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, ctId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("pic_id");
+                }
+            }
+        }
+        return null;
+    }
+
+    // get contact name
+    public static String getContactName(String ctId) throws SQLException {
+        String sql = "SELECT ct_name FROM contact_info WHERE ct_id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, ctId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("ct_name");
+                }
+            }
+        }
+        return null;
+    }
+
 }

@@ -12,7 +12,7 @@
 <div class="header">
   <div class="header-top-row">
     <div class="user-profile">
-      <img src="./images/1.jpg" alt="User Photo">
+      <img id="userProfilePhoto" src="image?user=default&file=default.jpg" alt="User Photo">
       <div class="user-info">
         <span class="location-city">济州 (Jeju)</span> <a href="#" class="change-city-link">[更换城市 (Change City)]</a>
       </div>
@@ -41,11 +41,6 @@
     <form id="contactFilterForm" class="search-bar">
       <input type="text" id="searchText" placeholder="姓名或电话">
 
-<!--      <select id="genderFilter">-->
-<!--        <option value="all" ${param.genderFilter == 'all' ? 'selected' : ''}>全部</option>-->
-<!--        <option value="male" ${param.genderFilter == 'male' ? 'selected' : ''}>男</option>-->
-<!--        <option value="female" ${param.genderFilter == 'female' ? 'selected' : ''}>女</option>-->
-<!--      </select>-->
       <select id="genderFilter">
         <option value="all">全部</option>
         <option value="male">男</option>
@@ -76,11 +71,8 @@
   </div>
 </div>
 
-<h1 style="display: none;">联系人列表</h1>
+<h1 style="display:  none;">联系人列表</h1>
 
-<div class="loading-message" id="loadingMessage"></div>
-
-<p id="errorMessage"></p>
 
 <div class="table-container">
   <table id="contactTable">
@@ -131,6 +123,10 @@
 <!--      </div>-->
 <!--    </c:forEach>-->
 </div>
+
+<div class="loading-message" id="loadingMessage"></div>
+
+<p id="errorMessage"></p>
 
 <script src="js/ContactList.js"></script>
 </body>

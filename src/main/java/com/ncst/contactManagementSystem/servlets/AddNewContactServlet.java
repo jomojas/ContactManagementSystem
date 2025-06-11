@@ -60,20 +60,7 @@ public class AddNewContactServlet extends HttpServlet {
                     email, gender, birthDate, phoneNumber
             };
 
-//            // 4. Store image file
-//            Part photoPart = request.getPart("photo");
-//            String submittedFileName = getFileName(photoPart);
-//
-//            String finalFileName;
-//            if (submittedFileName == null || submittedFileName.isEmpty()) {
-//                System.out.println("Use default image");
-//                finalFileName = "default.jpg";
-//            } else {
-//                finalFileName = submittedFileName;
-//                File userDir = new File(IMAGE_ROOT + userId);
-//                if (!userDir.exists()) userDir.mkdirs();
-//                photoPart.write(userDir.getAbsolutePath() + File.separator + finalFileName);
-//            }
+
             Part photoPart = request.getPart("photo");
             String submittedFileName = (photoPart == null) ? null : getFileName(photoPart);
 
@@ -85,7 +72,7 @@ public class AddNewContactServlet extends HttpServlet {
                 System.out.println("Use default image");
 
                 // 定义默认图片的路径（服务器上已有的默认图片）
-                File defaultImageFile = new File(IMAGE_ROOT + "default.jpg");
+                File defaultImageFile = new File(IMAGE_ROOT + "default" + File.separator + "default.jpg");
 
                 // 给用户目录里的默认图片命名，最好带上前缀，避免和其他用户冲突
                 finalFileName = "default.jpg";
@@ -115,10 +102,7 @@ public class AddNewContactServlet extends HttpServlet {
                 }
             }
 
-
             System.out.println("Store image successfully");
-
-
 
 //            System.out.println("Insert Data Into Database");
             // 5. Insert into database

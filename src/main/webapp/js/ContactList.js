@@ -21,11 +21,41 @@ let currentGender = 'all';
  * Main initialization function
  */
 function initContactList() {
+    // Load profile image
+    loadUserProfileImage();
+
     // Set up event listeners
     setupEventListeners();
 
     // Load initial data
     updateContacts();
+}
+
+/*
+ * Load user profile image
+ */
+function loadUserProfileImage() {
+    const profileImg = document.getElementById("userProfilePhoto");
+    if (!profileImg) return;
+
+    fetch('getUserId')
+        .then(response => response.json())
+        .then(data => {
+            if (data.userId && data.userId !== "default") {
+                const newSrc = `image?user=${encodeURIComponent(data.userId)}&file=profile.jpg`;
+                profileImg.src = newSrc;
+
+                // Fallback to default if user's image is missing
+                profileImg.onerror = function () {
+                    this.src = "image?user=default&file=default.jpg";
+                };
+            }
+        })
+        .catch(err => {
+            console.error("Error loading user ID:", err);
+            // fallback in case something breaks
+            profileImg.src = "image?user=default&file=default.jpg";
+        });
 }
 
 /**
@@ -90,6 +120,10 @@ function updateContacts() {
 
             if (contacts.length === 0) {
                 loadingMessage.textContent = '当前没有联系人';
+                console.log("Clear Inner HTML")
+                contactTableBody.innerHTML = '';
+                mobileContactList.innerHTML = '';
+                console.log("done");
                 return;
             }
 

@@ -1,4 +1,4 @@
- /* General Body Styling (same as ContactList.html) */
+/* General Body Styling */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -7,7 +7,7 @@ body {
     color: #333;
 }
 
-/* --- Header Section Styling (mostly same as ContactList.html, but action-buttons are removed) --- */
+/* --- Header Section Styling --- */
 .header {
     background-color: #fff;
     padding: 15px 20px;
@@ -51,33 +51,31 @@ body {
     color: #007bff;
     text-decoration: none;
 }
-.user-info .change-city-link:hover {
-    text-decoration: underline;
-}
 
 /* Weather Display */
 .weather-display {
     display: flex;
-    gap: 15px;
+    gap: 10px;
     flex-grow: 1;
     justify-content: center;
     flex-wrap: wrap;
 }
 .weather-day {
     text-align: center;
-    padding: 5px 10px;
+    padding: 5px 8px;
     border: 1px solid #eee;
     border-radius: 5px;
     background-color: #f9f9f9;
     flex-shrink: 0;
-    min-width: 100px;
+    min-width: 90px;
 }
 .weather-day .date {
     font-weight: bold;
+    font-size: 0.9em;
     color: #333;
 }
 .weather-day .temp {
-    font-size: 0.9em;
+    font-size: 0.8em;
     color: #666;
 }
 
@@ -86,55 +84,54 @@ body {
     display: flex;
     align-items: center;
     flex-grow: 1;
-    max-width: 400px;
+    max-width: 500px;
+    gap: 10px;
 }
 .search-bar input {
     flex-grow: 1;
-    padding: 10px 15px;
+    padding: 8px 12px;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 1em;
-    margin-right: 5px;
 }
-.search-bar button {
+.search-bar select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1em;
+    background-color: white;
+}
+.filter-button {
+    padding: 8px 15px;
     background-color: #007bff;
     color: white;
     border: none;
-    padding: 10px 15px;
     border-radius: 4px;
     cursor: pointer;
+    white-space: nowrap;
 }
-.search-bar button:hover {
+.filter-button:hover {
     background-color: #0056b3;
 }
 
-/* Gender Selector */
-.gender-selector {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    flex-shrink: 0;
-}
-.gender-selector label {
-    font-weight: bold;
-    color: #555;
-}
-.gender-selector select {
-    padding: 8px 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: #fff;
+/* --- Main Content Styling --- */
+.loading-message, #errorMessage {
+    text-align: center;
+    margin: 20px;
 }
 
-/* Removed .action-buttons styling */
-
-/* --- Main Content (Table) Styling (same as ContactList.html) --- */
+/* Table Styling */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    margin-bottom: 20px;
+}
 table {
-    width: 90%;
-    margin: 0 auto 30px auto;
+    width: 100%;
     border-collapse: collapse;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     background-color: #fff;
+    min-width: 600px;
 }
 th, td {
     border: 1px solid #ddd;
@@ -144,30 +141,6 @@ th, td {
 th {
     background-color: #007bff;
     color: white;
-    font-weight: bold;
-    text-transform: uppercase;
-}
-th.sortable {
-    cursor: pointer;
-    position: relative;
-}
-th.sortable::after {
-    content: '';
-    position: absolute;
-    right: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    border: 4px solid transparent;
-    border-top-color: #fff;
-    opacity: 0.5;
-}
-th.sortable.asc::after {
-    border-bottom-color: #fff;
-    border-top-color: transparent;
-}
-th.sortable.desc::after {
-    border-top-color: #fff;
-    border-bottom-color: transparent;
 }
 tbody tr:nth-child(even) {
     background-color: #f8f8f8;
@@ -175,19 +148,8 @@ tbody tr:nth-child(even) {
 tbody tr:hover {
     background-color: #f0f0f0;
 }
-#errorMessage {
-    color: red;
-    text-align: center;
-    margin-top: 20px;
-    font-weight: bold;
-}
-.loading-message {
-    text-align: center;
-    margin-top: 20px;
-    font-style: italic;
-    color: #666;
-}
-/* Table Action Button styling */
+
+/* Action buttons in Table */
 .action-button {
     padding: 6px 12px;
     margin: 2px;
@@ -197,22 +159,48 @@ tbody tr:hover {
     font-size: 0.9em;
     color: white;
 }
-.details-button {
-    background-color: #28a745; /* Green */
+.details-button { background-color: #28a745; }
+.restore-button { background-color: #00ffff; }
+
+/* Mobile Card View */
+.mobile-contact-card {
+    display: none;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin: 10px;
+    padding: 15px;
+    position: relative;
 }
-.details-button:hover {
-    background-color: #218838;
+.mobile-contact-info {
+    margin-bottom: 10px;
 }
-/* Changed from block-button to unblock-button styling */
-.unblock-button {
-    background-color: #007bff; /* Blue */
+.mobile-contact-name {
+    font-weight: bold;
+    font-size: 1.1em;
 }
-.unblock-button:hover {
-    background-color: #0056b3;
+.mobile-contact-gender {
+    display: inline-block;
+    margin-left: 10px;
+    font-size: 0.9em;
+    color: #666;
+}
+.mobile-contact-phone {
+    color: #007bff;
+}
+.mobile-contact-actions {
+    display: flex;
+    gap: 5px;
+    margin-top: 10px;
+}
+.mobile-contact-actions button {
+    flex: 1;
+    padding: 8px;
+    font-size: 0.8em;
 }
 
 
-/* Responsive adjustments for smaller screens (same as ContactList.html) */
+/* Responsive adjustments */
 @media (max-width: 768px) {
     .header {
         padding: 10px;
@@ -220,25 +208,42 @@ tbody tr:hover {
     .header-top-row,
     .header-bottom-row {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: stretch;
         gap: 10px;
     }
-    .user-profile, .weather-display, .search-bar, .gender-selector { /* No .action-buttons here */
+    .user-profile, .weather-display, .search-bar, .action-buttons {
         width: 100%;
-        justify-content: center;
+    }
+    .weather-display {
+        justify-content: space-between;
+    }
+    .weather-day {
+        flex: 1;
+        min-width: unset;
+    }
+    .search-bar {
+        flex-direction: column;
+        align-items: stretch;
     }
     table {
-        width: 98%;
-        margin: 10px auto;
+        display: none;
     }
-    th, td {
-        padding: 8px 10px;
-        font-size: 0.9em;
+    .mobile-contact-card {
+        display: block;
     }
 }
+
+@media (min-width: 769px) {
+    .mobile-contact-card {
+        display: none !important;
+    }
+}
+
 @media (max-width: 480px) {
-    .weather-day {
-        min-width: unset;
-        flex-grow: 1;
+    .weather-day .date {
+        font-size: 0.8em;
+    }
+    .weather-day .temp {
+        font-size: 0.7em;
     }
 }

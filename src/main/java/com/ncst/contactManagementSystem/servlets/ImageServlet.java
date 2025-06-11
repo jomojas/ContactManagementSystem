@@ -56,5 +56,6 @@ public class ImageServlet extends HttpServlet {
                 out.write(buffer, 0, bytesRead);
             }
         }
+//        System.out.println("Image uploaded successfully");
     }
 }
