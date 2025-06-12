@@ -72,7 +72,7 @@ body {
 }
 
 #searchButton {
-    background-color: #3b82f6;
+    background-color: #e0e7ff;
     border: none;
     padding: 0.55rem 0.8rem;
     border-radius: 6px;
@@ -238,6 +238,33 @@ tbody tr:hover {
 
 .mobile-action-button:hover {
     background-color: #2563eb;
+}
+
+/* Page Elements */
+.pagination-container {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+.page-button {
+    background-color: #e0e7ff;
+    color: white;
+    border: none;
+    padding: 0.4rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.page-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+#pageInfo, #mobilePageInfo {
+    font-weight: bold;
 }
 
 /* 📱 Responsive Rules */

@@ -258,6 +258,34 @@ tbody tr:hover {
     background-color: #ddd;
 }
 
+/* Page Elements */
+ .pagination-container {
+     margin-top: 1rem;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     gap: 1rem;
+ }
+
+ .page-button {
+     background-color: #007bff;
+     color: white;
+     border: none;
+     padding: 0.4rem 1rem;
+     border-radius: 4px;
+     cursor: pointer;
+ }
+
+ .page-button:disabled {
+     background-color: #ccc;
+     cursor: not-allowed;
+ }
+
+ #pageInfo, #mobilePageInfo {
+     font-weight: bold;
+ }
+
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .header {

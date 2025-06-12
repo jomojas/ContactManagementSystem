@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>联系人列表</title>
+    <title>事件列表</title>
     <link rel="stylesheet" href="css/Matter.css" />
 </head>
 <body>
-<h1 style="display: none;">联系人列表</h1>
+<h1 style="display: none;">事件列表</h1>
 
 <!-- 🔍 Filter Controls -->
 <div class="controls">
@@ -42,15 +42,18 @@
             <th>操作</th>
         </tr>
         </thead>
-        <tbody id="contactTableBody">
-        <!-- JS will populate rows -->
-        </tbody>
+        <tbody id="contactTableBody"></tbody>
     </table>
 </div>
 
 <!-- 📱 Mobile Card View -->
-<div id="mobileContactList" class="mobile-view">
-    <!-- JS will populate contact cards -->
+<div id="mobileContactList" class="mobile-view"></div>
+
+<!-- 通用分页控件，放在 table 和 mobile 后面 -->
+<div class="pagination-container">
+    <button id="prevPageBtn" class="page-button">上一页</button>
+    <span id="pageInfo">第 1 页</span>
+    <button id="nextPageBtn" class="page-button">下一页</button>
 </div>
 
 <script src="js/Matter.js"></script>

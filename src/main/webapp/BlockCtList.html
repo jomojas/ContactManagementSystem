@@ -53,7 +53,6 @@
 
 <h1 style="display: none;">黑名单列表</h1>
 
-
 <div class="table-container">
     <table id="contactTable">
         <thead>
@@ -65,45 +64,23 @@
             <th>操作</th>
         </tr>
         </thead>
-        <tbody id="contactTableBody">
-        <!--      <c:forEach var="contact" items="${contacts}">-->
-        <!--        <tr data-ctid="${contact[3]}">-->
-        <!--          <td>${contact[0]}</td>  &lt;!&ndash; Name &ndash;&gt;-->
-        <!--          <td>${contact[1]}</td>  &lt;!&ndash; Gender &ndash;&gt;-->
-        <!--          <td>${contact[2]}</td>  &lt;!&ndash; Phone &ndash;&gt;-->
-        <!--          <td><button class="action-button details-button">详情</button></td>-->
-        <!--          <td><button class="action-button block-button">还原</button></td>-->
-        <!--        </tr>-->
-        <!--      </c:forEach>-->
-        </tbody>
+        <tbody id="contactTableBody"></tbody>
     </table>
 </div>
 
 <!-- Mobile Contact Cards Container -->
-<div id="mobileContactList">
-    <!--    <c:forEach var="contact" items="${contacts}">-->
-    <!--      <div class="mobile-contact-card" data-ctid="${contact[3]}">-->
-    <!--        <div class="mobile-contact-info">-->
-    <!--            <span class="mobile-contact-name">${contact[0]}</span>-->
-    <!--            <span class="mobile-contact-gender">${contact[1]}</span>-->
-    <!--            <div class="mobile-contact-phone">${contact[2]}</div>-->
-    <!--        </div>-->
-    <!--          <div class="mobile-contact-actions">-->
-    <!--            <button class="action-button details-button" style="flex: 2;">详情</button>-->
-    <!--            <div class="mobile-action-dropdown">-->
-    <!--              <button class="mobile-dropdown-btn">更多操作</button>-->
-    <!--              <div class="mobile-dropdown-content">-->
-    <!--                <button class="block-button">还原</button>-->
-    <!--              </div>-->
-    <!--            </div>-->
-    <!--          </div>-->
-    <!--      </div>-->
-    <!--    </c:forEach>-->
-</div>
+<div id="mobileContactList"></div>
 
 <div class="loading-message" id="loadingMessage"></div>
 
 <p id="errorMessage"></p>
+
+<!-- 通用分页控件，放在 table 和 mobile 后面 -->
+<div class="pagination-container">
+    <button id="prevPageBtn" class="page-button">上一页</button>
+    <span id="pageInfo">第 1 页</span>
+    <button id="nextPageBtn" class="page-button">下一页</button>
+</div>
 
 <script src="js/BlockCtList.js"></script>
 </body>
