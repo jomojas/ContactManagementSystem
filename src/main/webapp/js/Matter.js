@@ -101,21 +101,24 @@ function renderMatterTable(matters) {
         const tr = document.createElement("tr");
         tr.dataset.matterId = matter.id;
 
+        const isDisabled = matter.status === "1" || matter.status === "2";
+
         tr.innerHTML = `
             <td>${matter.name}</td>
             <td>${matter.date}</td>
             <td>${matter.description}</td>
             <td>
-                <button class="action-button complete-button" onclick="changeState('${matter.id}', 'finished')">完成</button>
+                <button class="action-button complete-button" onclick="changeState('${matter.id}', 'finished')" ${isDisabled ? 'disabled' : ''}>完成</button>
             </td>
             <td>
-                <button class="action-button cancel-button" onclick="changeState('${matter.id}', 'cancel')">取消</button>
+                <button class="action-button cancel-button" onclick="changeState('${matter.id}', 'cancel')" ${isDisabled ? 'disabled' : ''}>取消</button>
             </td>
         `;
 
         matterTableBody.appendChild(tr);
     });
 }
+
 
 function renderMobileList(matters) {
     console.log("Rendering Mobile Data");
@@ -125,6 +128,8 @@ function renderMobileList(matters) {
         div.className = "mobile-contact-card";
         div.dataset.matterId = matter.id;
 
+        const isDisabled = matter.status === "1" || matter.status === "2";
+
         div.innerHTML = `
           <div class="mobile-contact-info">
               <div><strong>姓名:</strong> ${matter.name}</div>
@@ -132,14 +137,15 @@ function renderMobileList(matters) {
               <div><strong>事件:</strong> ${matter.description}</div>
           </div>
           <div class="mobile-contact-actions">
-            <button class="action-button complete-button" style="flex: 1; margin-right: 5px;" onclick="changeState('${matter.id}', 'finished')">完成</button>
-            <button class="action-button cancel-button" style="flex: 1;" onclick="changeState('${matter.id}', 'cancel')">取消</button>
+            <button class="action-button complete-button" style="flex: 1; margin-right: 5px;" onclick="changeState('${matter.id}', 'finished')" ${isDisabled ? 'disabled' : ''}>完成</button>
+            <button class="action-button cancel-button" style="flex: 1;" onclick="changeState('${matter.id}', 'cancel')" ${isDisabled ? 'disabled' : ''}>取消</button>
           </div>
         `;
 
         mobileContactList.appendChild(div);
     });
 }
+
 
 function changeState(matterId, action) {
     const actionText = action === 'finished' ? '完成' : '取消';

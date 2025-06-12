@@ -38,8 +38,8 @@ public class MatterServlet extends HttpServlet {
         int status;
         switch (statusParam) {
             case "pending": status = 0; break;
-            case "completed": status = 1; break;
-            case "cancelled": status = 2; break;
+            case "cancelled": status = 1; break;
+            case "completed": status = 2; break;
             default: status = 3; break;
         }
 
@@ -65,12 +65,13 @@ public class MatterServlet extends HttpServlet {
                 String time = m[1];
                 String desc = m[2];
                 String matterId = m[3];
+                String matterStatus = m[4];
 
                 String ctName = DBUtil.getContactName(ctId);  //  Fetch contact name
 
                 json.append(String.format(
-                        "{\"id\":\"%s\", \"date\":\"%s\", \"description\":\"%s\", \"name\":\"%s\"}",
-                        matterId, time, desc, ctName
+                        "{\"id\":\"%s\", \"date\":\"%s\", \"description\":\"%s\", \"name\":\"%s\", \"status\":\"%s\"}",
+                        matterId, time, desc, ctName, matterStatus
                 ));
                 if (i < matters.size() - 1) {
                     json.append(",");

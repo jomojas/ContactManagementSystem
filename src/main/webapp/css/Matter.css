@@ -168,20 +168,25 @@ tbody tr:hover {
     user-select: none;
 }
 
-.action-button.details-button {
-    background-color: #10b981;
+.action-button.complete-button {
+    background-color: #e0e7ff;
 }
 
-.action-button.details-button:hover {
-    background-color: #059669;
+.action-button.complete-button:not(:disabled):hover {
+    background-color: #2563eb;
 }
 
-.action-button.block-button {
-    background-color: #ef4444;
+.action-button.cancel-button {
+    background-color: #e0e7ff;
 }
 
-.action-button.block-button:hover {
-    background-color: #b91c1c;
+.action-button.cancel-button:not(:disabled):hover {
+    background-color: #2563eb;
+}
+
+.action-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
 }
 
 /* 📱 Mobile Card View */
@@ -256,6 +261,10 @@ tbody tr:hover {
     padding: 0.4rem 1rem;
     border-radius: 4px;
     cursor: pointer;
+}
+
+.page-button:not(:disabled):hover {
+    background-color: #2563eb;
 }
 
 .page-button:disabled {

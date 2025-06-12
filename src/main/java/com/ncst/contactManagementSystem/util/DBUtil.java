@@ -249,7 +249,7 @@ public class DBUtil {
             }
 
             // 2. 构建查询语句 contact_matter 表
-            StringBuilder matterSql = new StringBuilder("SELECT ct_id, matter_time, matter, matter_id FROM contact_matter WHERE 1=1");
+            StringBuilder matterSql = new StringBuilder("SELECT ct_id, matter_time, matter, matter_id, matter_delete FROM contact_matter WHERE 1=1");
             List<Object> params = new ArrayList<>();
 
             if (status != 3) { // 非 all
@@ -294,7 +294,8 @@ public class DBUtil {
                             rs.getString("ct_id"),
                             rs.getString("matter_time"),
                             rs.getString("matter"),
-                            rs.getString("matter_id")
+                            rs.getString("matter_id"),
+                            rs.getString("matter_delete")
                     });
                 }
             }
