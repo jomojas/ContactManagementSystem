@@ -3,6 +3,7 @@ package com.ncst.contactManagementSystem.util;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class DBUtil {
@@ -230,6 +231,144 @@ public class DBUtil {
     }
 
 
+    public static List<String[]> getFilteredMatter(String userId, String searchText, int status, int currentPage, int pageSize) throws SQLException {
+        List<String[]> result = new ArrayList<>();
+        List<String> ctIdList = new ArrayList<>();
+
+        try (Connection conn = getConnection()) {
+            // 1. 查找匹配的联系人 ct_id
+            if (searchText != null && !searchText.trim().isEmpty()) {
+                String contactSql = "SELECT ct_id FROM contact_info WHERE ct_name LIKE ?";
+                try (PreparedStatement ps = conn.prepareStatement(contactSql)) {
+                    ps.setString(1, "%" + searchText + "%");
+                    ResultSet rs = ps.executeQuery();
+                    while (rs.next()) {
+                        ctIdList.add(rs.getString("ct_id"));
+                    }
+                }
+            }
+
+            // 2. 构建查询语句 contact_matter 表
+            StringBuilder matterSql = new StringBuilder("SELECT ct_id, matter_time, matter, matter_id, matter_delete FROM contact_matter WHERE 1=1");
+            List<Object> params = new ArrayList<>();
+
+            if (status != 3) { // 非 all
+                matterSql.append(" AND matter_delete = ?");
+                params.add(status);
+            }
+
+            if (searchText != null && !searchText.trim().isEmpty()) {
+                matterSql.append(" AND (");
+                matterSql.append("matter LIKE ?");
+                params.add("%" + searchText + "%");
+
+                if (!ctIdList.isEmpty()) {
+                    matterSql.append(" OR ct_id IN (");
+                    matterSql.append(String.join(",", Collections.nCopies(ctIdList.size(), "?")));
+                    matterSql.append(")");
+                    params.addAll(ctIdList);
+                }
+
+                matterSql.append(")");
+            }
+
+            // 分页
+            matterSql.append(" ORDER BY matter_time ASC LIMIT ?, ?");
+            int offset = (currentPage - 1) * pageSize;
+            params.add(offset);
+            params.add(pageSize);
+
+            try (PreparedStatement ps = conn.prepareStatement(matterSql.toString())) {
+                int index = 1;
+                for (Object value : params) {
+                    if (value instanceof Integer) {
+                        ps.setInt(index++, (Integer) value);
+                    } else {
+                        ps.setString(index++, value.toString());
+                    }
+                }
+
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    result.add(new String[]{
+                            rs.getString("ct_id"),
+                            rs.getString("matter_time"),
+                            rs.getString("matter"),
+                            rs.getString("matter_id"),
+                            rs.getString("matter_delete")
+                    });
+                }
+            }
+        }
+
+        return result;
+    }
+
+
+
+    public static int countFilteredMatter(String userId, String keyword, int status) throws SQLException {
+        int total = 0;
+        List<String> ctIdList = new ArrayList<>();
+
+        try (Connection conn = getConnection()) {
+            // 1. 查找匹配联系人 ct_id
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                String contactSql = "SELECT ct_id FROM contact_info WHERE user_id = ? AND ct_name LIKE ?";
+                try (PreparedStatement ps = conn.prepareStatement(contactSql)) {
+                    ps.setString(1, userId);
+                    ps.setString(2, "%" + keyword + "%");
+                    ResultSet rs = ps.executeQuery();
+                    while (rs.next()) {
+                        ctIdList.add(rs.getString("ct_id"));
+                    }
+                }
+            }
+
+            // 2. 构建计数查询 contact_matter 表
+            StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM contact_matter WHERE 1=1");
+            List<Object> params = new ArrayList<>();
+
+            if (status != 3) { // 3 means all statuses
+                sql.append(" AND matter_delete = ?");
+                params.add(status);
+            }
+
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                sql.append(" AND (");
+                sql.append("matter LIKE ?");
+                params.add("%" + keyword + "%");
+
+                if (!ctIdList.isEmpty()) {
+                    sql.append(" OR ct_id IN (");
+                    sql.append(String.join(",", Collections.nCopies(ctIdList.size(), "?")));
+                    sql.append(")");
+                    params.addAll(ctIdList);
+                }
+
+                sql.append(")");
+            }
+
+            try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+                for (int i = 0; i < params.size(); i++) {
+                    Object param = params.get(i);
+                    if (param instanceof Integer) {
+                        ps.setInt(i + 1, (Integer) param);
+                    } else {
+                        ps.setString(i + 1, param.toString());
+                    }
+                }
+
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    total = rs.getInt(1);
+                }
+            }
+        }
+
+        return total;
+    }
+
+
     // 17. Delete matter
     public static boolean deleteMatter(String matterId) throws SQLException {
         String sql = "UPDATE contact_matter SET matter_delete = 1 WHERE matter_id = ?";
@@ -270,23 +409,13 @@ public class DBUtil {
     }
 
     // Get Filtered Contacts according to user's condition
-    public static List<String[]> getFilteredContact(String userId, String searchText, String genderFilter, int status)
+    public static List<String[]> getFilteredContact(String userId, String searchText, String genderFilter, int offset, int pageSize, int status)
             throws SQLException {
 
-//        System.out.println("DBUtil");
-//        System.out.println(searchText);
-
-        String sql = null;
-        if(status == 0) {
-             sql = "SELECT ct_name, ct_mf, ct_phone, ct_id FROM contact_info " +
-                    "WHERE user_id = ? AND ct_delete = 0";
-        } else if(status == 1) {
-             sql = "SELECT ct_name, ct_mf, ct_phone, ct_id FROM contact_info " +
-                    "WHERE user_id = ? AND ct_delete = 1";
-        }
-
+        String sql = "SELECT ct_name, ct_mf, ct_phone, ct_id FROM contact_info WHERE user_id = ? AND ct_delete = ?";
         List<String> params = new ArrayList<>();
         params.add(userId);
+        params.add(String.valueOf(status));
 
         // Add search text filter (name or phone)
         if (searchText != null && !searchText.trim().isEmpty()) {
@@ -301,20 +430,34 @@ public class DBUtil {
             params.add(genderFilter.equals("male") ? "男" : "女");
         }
 
+        // Add pagination
+        sql += " LIMIT ?, ?";
+        params.add(String.valueOf(offset));
+        params.add(String.valueOf(pageSize));
 
-//        // Debug output
-//        System.out.println("Final SQL: " + sql);
-//        System.out.println("Params: " + params);
-
+//        System.out.println(sql);
+//        System.out.println(params);
+        System.out.println("Starting Getting Data From Database");
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             for (int i = 0; i < params.size(); i++) {
-                stmt.setString(i + 1, params.get(i));
+                String param = params.get(i);
+
+                if (i == 1 || i >= params.size() - 2) {
+                    // index 1 is status; last 2 are offset and pageSize — all should be integers
+                    stmt.setInt(i + 1, Integer.parseInt(param));
+                } else {
+                    stmt.setString(i + 1, param);
+                }
             }
 
+
+            System.out.println(sql);
+            System.out.println(params);
             ResultSet rs = stmt.executeQuery();
             List<String[]> contacts = new ArrayList<>();
+            System.out.println("Start Constructing Contacts");
             while (rs.next()) {
                 contacts.add(new String[]{
                         rs.getString("ct_name"),
@@ -322,11 +465,51 @@ public class DBUtil {
                         rs.getString("ct_phone"),
                         rs.getString("ct_id")
                 });
-//                System.out.println(Arrays.toString(contacts.get(0)));
             }
+            System.out.println("Getting Data Successfully");
             return contacts;
         }
     }
+
+    // Count Filtered Contact Number
+    public static int countFilteredContact(String userId, String searchText, String genderFilter, int status) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM contact_info WHERE user_id = ? AND ct_delete = ?";
+        List<String> params = new ArrayList<>();
+        params.add(userId);
+        params.add(String.valueOf(status));
+
+        if (searchText != null && !searchText.trim().isEmpty()) {
+            sql += " AND (ct_name LIKE ? OR ct_phone LIKE ?)";
+            params.add("%" + searchText + "%");
+            params.add("%" + searchText + "%");
+        }
+
+        if (genderFilter != null && !genderFilter.equals("all")) {
+            sql += " AND ct_mf = ?";
+            params.add(genderFilter.equals("male") ? "男" : "女");
+        }
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            for (int i = 0; i < params.size(); i++) {
+                String param = params.get(i);
+                if (i == 1) {
+                    stmt.setInt(i + 1, Integer.parseInt(param)); // ct_delete
+                } else {
+                    stmt.setString(i + 1, param);
+                }
+            }
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+            return 0;
+        }
+    }
+
+
 
     // Get pic_id of ct_id
     public static String getContactPicID(String ctId) throws SQLException {

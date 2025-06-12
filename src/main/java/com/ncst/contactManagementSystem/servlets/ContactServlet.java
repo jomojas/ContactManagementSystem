@@ -28,38 +28,43 @@ public class ContactServlet extends HttpServlet {
         }
 
         try {
-            List<String[]> contacts;
+            // Get request parameters
+            String searchText = request.getParameter("searchText");
+            String genderFilter = request.getParameter("genderFilter");
+            String pageParam = request.getParameter("page");
+            String pageSizeParam = request.getParameter("pageSize");
 
-            if (hasFilterParameters(request)) {
-                String searchText = request.getParameter("searchText");
-                String genderFilter = request.getParameter("genderFilter");
-                contacts = DBUtil.getFilteredContact(userId, searchText, genderFilter, 0);
-            } else {
-                contacts = DBUtil.getContact(userId, 1, 100, 0); // all contacts
-            }
+//            System.out.println(pageSizeParam);
+            int page = (pageParam != null) ? Integer.parseInt(pageParam) : 1;
+            int pageSize = (pageSizeParam != null) ? Integer.parseInt(pageSizeParam) : 10;
+            int offset = (page - 1) * pageSize;
 
-            sendJsonResponse(response, contacts);
+//            System.out.println("pageSize: " + pageSize);
+//            System.out.println("Start Calling Get Method");
+            // status = 0: not blocked
+            List<String[]> contacts = DBUtil.getFilteredContact(userId, searchText, genderFilter, offset, pageSize, 0);
+            int total = DBUtil.countFilteredContact(userId, searchText, genderFilter, 0);
+//            System.out.println("total" + total);
 
-        } catch (SQLException e) {
+            sendJsonResponse(response, contacts, total);
+
+        } catch (SQLException | NumberFormatException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("{\"error\":\"数据库错误: " + e.getMessage() + "\"}");
         }
     }
 
-    private boolean hasFilterParameters(HttpServletRequest request) {
-        return request.getParameter("searchText") != null ||
-                request.getParameter("genderFilter") != null;
-    }
-
-    private void sendJsonResponse(HttpServletResponse response, List<String[]> contacts)
+    private void sendJsonResponse(HttpServletResponse response, List<String[]> contacts, int total)
             throws IOException {
         response.setContentType("application/json");
-        String json = convertToJson(contacts);
+        String json = convertToJson(contacts, total);
         response.getWriter().write(json);
     }
 
-    private String convertToJson(List<String[]> contacts) {
-        StringBuilder json = new StringBuilder("[");
+    private String convertToJson(List<String[]> contacts, int total) {
+        StringBuilder json = new StringBuilder("{");
+        json.append("\"total\":").append(total).append(",\"contacts\":[");
+
         for (int i = 0; i < contacts.size(); i++) {
             String[] contact = contacts.get(i);
             json.append("[");
@@ -70,7 +75,8 @@ public class ContactServlet extends HttpServlet {
             json.append("]");
             if (i < contacts.size() - 1) json.append(",");
         }
-        json.append("]");
+
+        json.append("]}");
         return json.toString();
     }
 

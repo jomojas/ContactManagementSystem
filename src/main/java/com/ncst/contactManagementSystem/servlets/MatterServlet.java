@@ -8,102 +8,86 @@ import javax.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
 @WebServlet("/matter")
 public class MatterServlet extends HttpServlet {
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        System.out.println("in MatterServlet");
         request.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json; charset=UTF-8");
+
+        HttpSession session = request.getSession(false);
+        String userId = (session != null) ? (String) session.getAttribute("userId") : null;
+
+        if (userId == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("{\"error\":\"未登录，请重新登录。\"}");
+            return;
+        }
 
         String keyword = request.getParameter("keyword");
         String statusParam = request.getParameter("status");
         String direction = request.getParameter("direction");
+        String pageParam = request.getParameter("page");
+        String pageSizeParam = request.getParameter("pageSize");
 
         int status;
-        if ("pending".equals(statusParam)) {
-            status = 0;
-        } else if ("completed".equals(statusParam)) {
-            status = 1;
-        } else if ("cancelled".equals(statusParam)) {
-            status = 2;
-        } else {
-            status = 0;
+        switch (statusParam) {
+            case "pending": status = 0; break;
+            case "cancelled": status = 1; break;
+            case "completed": status = 2; break;
+            default: status = 3; break;
         }
 
-        System.out.println("keyword: " + keyword);
+        int page = (pageParam != null) ? Integer.parseInt(pageParam) : 1;
+        int pageSize = (pageSizeParam != null) ? Integer.parseInt(pageSizeParam) : 10;
+
         try {
-            System.out.println("Start Getting Matters");
-            List<String[]> matterList = DBUtil.getMatter(status);
+            System.out.println("Start getting matters");
+            List<String[]> matters = DBUtil.getFilteredMatter(userId, keyword, status, page, pageSize);
+            int total = DBUtil.countFilteredMatter(userId, keyword, status);
 
-            // 临时缓存 ct_id -> ct_name 避免重复查询数据库
-            Map<String, String> ctNameCache = new HashMap<>();
-
-            // 关键词过滤：对 ct_name 和 matter 匹配
-            Iterator<String[]> iter = matterList.iterator();
-            while (iter.hasNext()) {
-                String[] m = iter.next();
-                String ctId = m[0];
-                String matter = m[2];
-
-                // 取出姓名（可能重复用，先查缓存）
-                String ctName = ctNameCache.get(ctId);
-                if (ctName == null) {
-                    ctName = DBUtil.getContactName(ctId);
-                    ctNameCache.put(ctId, ctName);
-                }
-
-                if (keyword != null && !keyword.isEmpty()) {
-                    System.out.println(keyword);
-                    System.out.println(matter);
-                    System.out.println(ctName);
-                    if (!ctName.contains(keyword) && !matter.contains(keyword)) {
-                        iter.remove(); // 不匹配就删掉
-                    }
-                }
+            if ("desc".equalsIgnoreCase(direction)) {
+                Collections.reverse(matters);
             }
 
-            System.out.println("Start sorting matter by matter_time");
-            // 排序：按 matter_time 排序（m[1]）
-            matterList.sort((a, b) -> {
-                String timeA = a[1];
-                String timeB = b[1];
-                int cmp = timeA.compareTo(timeB);
-                return "desc".equalsIgnoreCase(direction) ? -cmp : cmp;
-            });
-
-            System.out.println("Start Constructing JSON response");
-            // 构造 JSON 响应
-            response.setContentType("application/json; charset=UTF-8");
             PrintWriter out = response.getWriter();
-            out.print("[");
+            StringBuilder json = new StringBuilder();
+            json.append("{\"data\":[");
 
-            for (int i = 0; i < matterList.size(); i++) {
-                String[] m = matterList.get(i);
+            for (int i = 0; i < matters.size(); i++) {
+                String[] m = matters.get(i);
                 String ctId = m[0];
                 String time = m[1];
                 String desc = m[2];
                 String matterId = m[3];
-                String ctName = ctNameCache.get(ctId);
+                String matterStatus = m[4];
 
-                out.print(String.format(
-                        "{\"id\":\"%s\", \"date\":\"%s\", \"description\":\"%s\", \"name\":\"%s\"}",
-                        matterId, time, desc, ctName
+                String ctName = DBUtil.getContactName(ctId);  //  Fetch contact name
+
+                json.append(String.format(
+                        "{\"id\":\"%s\", \"date\":\"%s\", \"description\":\"%s\", \"name\":\"%s\", \"status\":\"%s\"}",
+                        matterId, time, desc, ctName, matterStatus
                 ));
-                if (i < matterList.size() - 1) {
-                    out.print(",");
+                if (i < matters.size() - 1) {
+                    json.append(",");
                 }
             }
 
-            out.print("]");
+            json.append("],\"total\":").append(total).append("}");
+            out.print(json);
             out.flush();
+
 
         } catch (SQLException e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "数据库错误: " + e.getMessage());
         }
     }
+
 
 
     @Override

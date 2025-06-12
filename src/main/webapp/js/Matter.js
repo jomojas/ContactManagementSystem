@@ -1,6 +1,9 @@
 // Matter.js
 
 let sortDirection = 'asc'; // default sorting direction
+let currentPage = 1;
+let pageSize = 10;
+let totalPages = 1;
 
 // DOM references
 const matterSearchInput = document.getElementById("matterSearch");
@@ -10,6 +13,9 @@ const searchButton = document.getElementById("searchButton");
 const matterTableBody = document.getElementById("contactTableBody");
 const mobileContactList = document.getElementById("mobileContactList");
 const dateHeader = document.getElementById("timeHeader");
+const pageInfo = document.getElementById("pageInfo");
+const prevPageBtn = document.getElementById("prevPageBtn");
+const nextPageBtn = document.getElementById("nextPageBtn");
 
 // Fetch and update matter list (table + mobile)
 function updateMatter() {
@@ -24,7 +30,9 @@ function updateMatter() {
         keyword,
         status,
         sort: "date",
-        direction: sortDirection
+        direction: sortDirection,
+        page: currentPage,
+        pageSize: pageSize
     });
 
     console.log("Start fetching data");
@@ -34,7 +42,15 @@ function updateMatter() {
             return response.json();
         })
         .then(data => {
-            if (!Array.isArray(data) || data.length === 0) {
+            if (!data || !Array.isArray(data.data)) {
+                throw new Error("无效数据格式");
+            }
+
+            const matters = data.data;
+            totalPages = Math.ceil(data.total / pageSize);
+            renderPageInfo();
+
+            if (matters.length === 0) {
                 const tr = document.createElement("tr");
                 tr.innerHTML = `<td colspan="5" style="text-align:center;">暂无事项</td>`;
                 matterTableBody.appendChild(tr);
@@ -48,13 +64,33 @@ function updateMatter() {
             }
 
             console.log("start rendering data");
-            renderMatterTable(data);
-            renderMobileList(data);
+            renderMatterTable(matters);
+            renderMobileList(matters);
         })
         .catch(err => {
             matterTableBody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:red;">加载失败: ${err.message}</td></tr>`;
             mobileContactList.innerHTML = `<div style="text-align:center;color:red;padding:1rem;">加载失败: ${err.message}</div>`;
         });
+}
+
+function renderPageInfo() {
+    if (pageInfo) pageInfo.textContent = `第 ${currentPage} 页 / 共 ${totalPages} 页`;
+    prevPageBtn.disabled = currentPage <= 1;
+    nextPageBtn.disabled = currentPage >= totalPages;
+}
+
+function goToPreviousPage() {
+    if (currentPage > 1) {
+        currentPage--;
+        updateMatter();
+    }
+}
+
+function goToNextPage() {
+    if (currentPage < totalPages) {
+        currentPage++;
+        updateMatter();
+    }
 }
 
 // Render desktop table rows
@@ -63,20 +99,19 @@ function renderMatterTable(matters) {
 
     matters.forEach(matter => {
         const tr = document.createElement("tr");
-
-        // Use dataset to store matter id for reference if needed
         tr.dataset.matterId = matter.id;
 
-        // Build table row with operation buttons calling changeState with matter.id and action
+        const isDisabled = matter.status === "1" || matter.status === "2";
+
         tr.innerHTML = `
             <td>${matter.name}</td>
             <td>${matter.date}</td>
             <td>${matter.description}</td>
             <td>
-                <button class="action-button complete-button" onclick="changeState('${matter.id}', 'finished')">完成</button>
+                <button class="action-button complete-button" onclick="changeState('${matter.id}', 'finished')" ${isDisabled ? 'disabled' : ''}>完成</button>
             </td>
             <td>
-                <button class="action-button cancel-button" onclick="changeState('${matter.id}', 'cancel')">取消</button>
+                <button class="action-button cancel-button" onclick="changeState('${matter.id}', 'cancel')" ${isDisabled ? 'disabled' : ''}>取消</button>
             </td>
         `;
 
@@ -84,7 +119,7 @@ function renderMatterTable(matters) {
     });
 }
 
-// Render mobile contact cards
+
 function renderMobileList(matters) {
     console.log("Rendering Mobile Data");
 
@@ -93,15 +128,17 @@ function renderMobileList(matters) {
         div.className = "mobile-contact-card";
         div.dataset.matterId = matter.id;
 
+        const isDisabled = matter.status === "1" || matter.status === "2";
+
         div.innerHTML = `
           <div class="mobile-contact-info">
-            <div><strong>姓名:</strong> ${matter.name}</div>
-            <div><strong>时间:</strong> ${matter.date}</div>
-            <div><strong>事件:</strong> ${matter.description}</div>
+              <div><strong>姓名:</strong> ${matter.name}</div>
+              <div><strong>时间:</strong> ${matter.date}</div>
+              <div><strong>事件:</strong> ${matter.description}</div>
           </div>
           <div class="mobile-contact-actions">
-            <button class="action-button complete-button" style="flex: 1; margin-right: 5px;" onclick="changeState('${matter.id}', 'finished')">完成</button>
-            <button class="action-button cancel-button" style="flex: 1;" onclick="changeState('${matter.id}', 'cancel')">取消</button>
+            <button class="action-button complete-button" style="flex: 1; margin-right: 5px;" onclick="changeState('${matter.id}', 'finished')" ${isDisabled ? 'disabled' : ''}>完成</button>
+            <button class="action-button cancel-button" style="flex: 1;" onclick="changeState('${matter.id}', 'cancel')" ${isDisabled ? 'disabled' : ''}>取消</button>
           </div>
         `;
 
@@ -109,7 +146,7 @@ function renderMobileList(matters) {
     });
 }
 
-// Send POST request to change matter status
+
 function changeState(matterId, action) {
     const actionText = action === 'finished' ? '完成' : '取消';
     const confirmMsg = `确认将事项标记为${actionText}？`;
@@ -121,48 +158,31 @@ function changeState(matterId, action) {
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: new URLSearchParams({
-            matterId,
-            action
-        })
+        body: new URLSearchParams({ matterId, action })
     })
         .then(response => {
-            if (!response.ok) {
-                return response.text().then(msg => { throw new Error(msg); });
-            }
+            if (!response.ok) return response.text().then(msg => { throw new Error(msg); });
             alert(`事项已${actionText}`);
-            updateMatter(); // 或者 window.location.reload();
+            updateMatter();
         })
-        .catch(err => {
-            alert("操作失败: " + err.message);
-        });
+        .catch(err => alert("操作失败: " + err.message));
 }
 
-
-// Toggle sort direction on date header click
 function toggleSortDirection() {
     sortDirection = (sortDirection === 'asc') ? 'desc' : 'asc';
-
-    // Optional: Update header arrow indicators
-    if (sortDirection === "asc") {
-        dateHeader.textContent = "时间 ▲▼";
-    } else {
-        dateHeader.textContent = "时间 ▼▲";
-    }
-
+    dateHeader.textContent = sortDirection === 'asc' ? "时间 ▲▼" : "时间 ▼▲";
     updateMatter();
 }
 
 // Event listeners
-matterSearchInput.addEventListener("input", debounce(() => {}, 400)); // Optional: can debounce updateMatter if instant search wanted
-// matterStatusSelect.addEventListener("change", updateMatter);
-searchButton.addEventListener("click", updateMatter);
+matterSearchInput.addEventListener("input", debounce(() => {}, 400));
+searchButton.addEventListener("click", () => { currentPage = 1; updateMatter(); });
 dateHeader.addEventListener("click", toggleSortDirection);
+prevPageBtn.addEventListener("click", goToPreviousPage);
+nextPageBtn.addEventListener("click", goToNextPage);
 
-// Initial load
 document.addEventListener("DOMContentLoaded", updateMatter);
 
-// Debounce helper function
 function debounce(fn, delay) {
     let timer;
     return function (...args) {

@@ -9,14 +9,17 @@ body {
 
 /* --- Header Section Styling --- */
 .header {
-    background-color: #fff;
-    padding: 15px 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    padding: 1rem 1.25rem;
+    margin: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 1.5px 6px rgba(0, 0, 0, 0.08); /* Floating effect */
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    margin-bottom: 20px;
+    gap: 1rem;
 }
+
 
 .header-top-row,
 .header-bottom-row {
@@ -142,10 +145,15 @@ body {
 
 /* Table Styling */
 .table-container {
-    width: 100%;
+    background-color: #fff;
+    margin: 1rem;
+    margin-top: 0;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    box-shadow: 0 1.5px 8px rgba(0, 0, 0, 0.1); /* Floating effect */
     overflow-x: auto;
-    margin-bottom: 20px;
 }
+
 table {
     width: 100%;
     border-collapse: collapse;
@@ -257,6 +265,34 @@ tbody tr:hover {
 .mobile-dropdown-content button:hover {
     background-color: #ddd;
 }
+
+/* Page Elements */
+ .pagination-container {
+     margin-top: 1rem;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     gap: 1rem;
+ }
+
+ .page-button {
+     background-color: #007bff;
+     color: white;
+     border: none;
+     padding: 0.4rem 1rem;
+     border-radius: 4px;
+     cursor: pointer;
+ }
+
+ .page-button:disabled {
+     background-color: #ccc;
+     cursor: not-allowed;
+ }
+
+ #pageInfo, #mobilePageInfo {
+     font-weight: bold;
+ }
+
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
