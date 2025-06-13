@@ -185,7 +185,7 @@ tbody tr:hover {
 }
 
 .action-button:disabled {
-    background-color: #ccc;
+    background-color: #cbd5e1;
     cursor: not-allowed;
 }
 
@@ -268,7 +268,7 @@ tbody tr:hover {
 }
 
 .page-button:disabled {
-    background-color: #ccc;
+    background-color: #cbd5e1;
     cursor: not-allowed;
 }
 

@@ -1,283 +1,252 @@
-/* General Body Styling */
+/* ======= Base Reset ======= */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f0f2f5;
-    color: #333;
+  margin: 0;
+  padding: 1rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9fafb;
+  color: #1e293b;
 }
 
-/* --- Header Section Styling --- */
-.header {
-    background-color: #ffffff;
-    padding: 1rem 1.25rem;
-    margin: 1rem;
-    margin-bottom: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 1.5px 6px rgba(0, 0, 0, 0.08); /* Floating effect */
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+/* ======= Controls (Search & Filter) ======= */
+.controls {
+  background: #fff;
+  padding: 1rem 1.25rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  margin-bottom: 1.5rem;
+}
+.search-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
 }
 
-
-.header-top-row,
-.header-bottom-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    align-items: center;
-    justify-content: space-between;
+#searchText {
+  flex: 2 1 0;
+  min-width: 150px;
+  padding: 0.6rem 1rem;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  background-color: white;
 }
 
-/* User Profile */
-.user-profile {
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-}
-.user-profile img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    margin-right: 10px;
-    border: 2px solid #007bff;
-    object-fit: cover;
-}
-.user-info .location-city {
-    font-weight: bold;
-    color: #555;
-    display: block;
-}
-.user-info .change-city-link {
-    font-size: 0.85em;
-    color: #007bff;
-    text-decoration: none;
+#searchText:focus {
+    outline: none;
+    border-color: #3b82f6; /* 蓝色焦点 */
+    box-shadow: 0 0 6px rgba(59,130,246,0.5);
 }
 
-/* Weather Display */
-.weather-display {
-    display: flex;
-    gap: 10px;
-    flex-grow: 1;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-.weather-day {
-    text-align: center;
-    padding: 5px 8px;
-    border: 1px solid #eee;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-    flex-shrink: 0;
-    min-width: 90px;
-}
-.weather-day .date {
-    font-weight: bold;
-    font-size: 0.9em;
-    color: #333;
-}
-.weather-day .temp {
-    font-size: 0.8em;
-    color: #666;
+#genderFilter {
+  flex: 1 1 0;
+  min-width: 120px;
+  padding: 0.6rem 1rem;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  background-color: white;
 }
 
-/* Search Bar */
-.search-bar {
-    display: flex;
-    align-items: center;
-    flex-grow: 1;
-    max-width: 500px;
-    gap: 10px;
-}
-.search-bar input {
-    flex-grow: 1;
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1em;
-}
-.search-bar select {
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1em;
-    background-color: white;
-}
-.filter-button {
-    padding: 8px 15px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    white-space: nowrap;
-}
-.filter-button:hover {
-    background-color: #0056b3;
+#genderFilter:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 6px rgba(59,130,246,0.4);
 }
 
-/* --- Main Content Styling --- */
-.loading-message, #errorMessage {
-    text-align: center;
-    margin: 20px;
+.gender-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
 }
 
-/* Table Styling */
+#filterButton {
+  flex: 0 0 auto;
+  background-color: #e0e7ff;
+  padding: 0.6rem 0.9rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+#filterButton:hover {
+  background-color: #3b82f6;
+}
+
+#filterButton svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* ======= Table View ======= */
 .table-container {
-    background-color: #fff;
-    margin: 1rem;
-    margin-top: 0;
-    padding: 0.5rem 0.75rem;
-    border-radius: 8px;
-    box-shadow: 0 1.5px 8px rgba(0, 0, 0, 0.1); /* Floating effect */
-    overflow-x: auto;
+  background-color: #fff;
+  border-radius: 10px;
+  overflow-x: auto;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
-    min-width: 600px;
-}
-th, td {
-    border: 1px solid #ddd;
-    padding: 12px 15px;
-    text-align: left;
-}
-th {
-    background-color: #007bff;
-    color: white;
-}
-tbody tr:nth-child(even) {
-    background-color: #f8f8f8;
-}
-tbody tr:hover {
-    background-color: #f0f0f0;
+#contactTable {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
 }
 
-/* Action buttons in Table */
-.action-button {
-    padding: 6px 12px;
-    margin: 2px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9em;
-    color: white;
+#contactTable thead {
+  background-color: #e0e7ff;
 }
-.details-button { background-color: #28a745; }
-.restore-button { background-color: #00ffff; }
 
-/* Mobile Card View */
+#contactTable th,
+#contactTable td {
+  padding: 0.9rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 1rem;
+}
+
+#contactTable tbody tr:hover {
+  background-color: #f1f5f9;
+}
+
+/* ======= Mobile Card View (Initially Hidden) ======= */
+#mobileContactList {
+  display: none;
+}
+
 .mobile-contact-card {
-    display: none;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    margin: 10px;
-    padding: 15px;
-    position: relative;
-}
-.mobile-contact-info {
-    margin-bottom: 10px;
-}
-.mobile-contact-name {
-    font-weight: bold;
-    font-size: 1.1em;
-}
-.mobile-contact-gender {
-    display: inline-block;
-    margin-left: 10px;
-    font-size: 0.9em;
-    color: #666;
-}
-.mobile-contact-phone {
-    color: #007bff;
-}
-.mobile-contact-actions {
-    display: flex;
-    gap: 5px;
-    margin-top: 10px;
-}
-.mobile-contact-actions button {
-    flex: 1;
-    padding: 8px;
-    font-size: 0.8em;
+  background-color: #fff;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
-/* Page Elements */
+.mobile-contact-name {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
+}
+
+.mobile-contact-info {
+  font-size: 0.95rem;
+  color: #475569;
+  margin-bottom: 0.25rem;
+}
+
+.mobile-contact-actions {
+  margin-top: 0.75rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.mobile-contact-actions button {
+  flex: 1;
+  font-size: 0.9rem;
+}
+
+/* ======= Action Buttons ======= */
+button {
+  cursor: pointer;
+}
+
+.action-button {
+  padding: 0.45rem 0.9rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: #fff;
+  transition: background-color 0.3s ease;
+}
+
+.details-button {
+  background-color: #e0e7ff;
+}
+
+.details-button:hover {
+  background-color: #3b82f6;
+}
+
+.restore-button {
+  background-color: #e0e7ff;
+}
+
+.restore-button:hover {
+  background-color: #3b82f6;
+}
+
+/* ======= Loading & Error ======= */
+.loading-message,
+#errorMessage {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 1rem;
+  color: #dc2626;
+}
+
+/* ======= Pagination ======= */
 .pagination-container {
-    margin-top: 1rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .page-button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 0.4rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
+  background-color: #e0e7ff;
+  color: #1e3a8a;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.page-button:hover:not(:disabled) {
+  background-color: #2563eb;
+  color: #fff;
 }
 
 .page-button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
+  background-color: #cbd5e1;
+  cursor: not-allowed;
 }
 
-#pageInfo, #mobilePageInfo {
-    font-weight: bold;
+#pageInfo {
+  font-weight: bold;
+  font-size: 1rem;
+  color: #1e293b;
 }
 
-/* Responsive adjustments */
+/* ======= Responsive Rules ======= */
 @media (max-width: 768px) {
-    .header {
-        padding: 10px;
-    }
-    .header-top-row,
-    .header-bottom-row {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-    }
-    .user-profile, .weather-display, .search-bar, .action-buttons {
-        width: 100%;
-    }
-    .weather-display {
-        justify-content: space-between;
-    }
-    .weather-day {
-        flex: 1;
-        min-width: unset;
-    }
-    .search-bar {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    table {
-        display: none;
-    }
-    .mobile-contact-card {
-        display: block;
-    }
-}
+  .table-container {
+    display: none;
+  }
 
-@media (min-width: 769px) {
-    .mobile-contact-card {
-        display: none !important;
-    }
-}
+  #mobileContactList {
+    display: block;
+  }
 
-@media (max-width: 480px) {
-    .weather-day .date {
-        font-size: 0.8em;
-    }
-    .weather-day .temp {
-        font-size: 0.7em;
-    }
+  .search-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .pagination-container {
+    flex-direction: column;
+    align-items: center;
+  }
 }

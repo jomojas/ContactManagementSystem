@@ -63,6 +63,12 @@
       <version>2.10.1</version> <!-- You can check for the latest version on Maven Central -->
     </dependency>
 
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20240303</version> <!-- Latest as of 2024 -->
+    </dependency>
+
   </dependencies>
   <build>
     <finalName>ContactManagementSystem</finalName>
