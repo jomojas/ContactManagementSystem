@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Get contact ID from URL
     const urlParams = new URLSearchParams(window.location.search);
     const ctId = urlParams.get('ctId');
+    const isDeleted = urlParams.get('isDeleted');
 
     if (!ctId) {
         showError('无效的联系人ID');
@@ -9,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Load contact details
-    loadContactDetails(ctId);
+    loadContactDetails(ctId, isDeleted);
 
     // Setup form submission
     document.getElementById('addContactForm').addEventListener('submit', function(e) {
@@ -37,10 +38,12 @@ document.addEventListener('DOMContentLoaded', function() {
 /**
  * Load contact details from server
  */
-function loadContactDetails(ctId) {
+function loadContactDetails(ctId, isDeleted) {
     showLoading(true);
 
-    fetch(`/ContactManagementSystem/detailCt?ctId=${encodeURIComponent(ctId)}`)
+    console.log(ctId);
+    console.log(isDeleted);
+    fetch(`/ContactManagementSystem/detailCt?ctId=${encodeURIComponent(ctId)}&isDeleted=${encodeURIComponent(isDeleted)}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');

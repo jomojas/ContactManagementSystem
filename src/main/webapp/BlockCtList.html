@@ -1,59 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>黑名单列表 (Block List)</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>黑名单列表</title>
     <link rel="stylesheet" href="css/BlockCtList.css" />
 </head>
 <body>
-<div class="header">
-    <div class="header-top-row">
-        <div class="user-profile">
-            <img id="userProfilePhoto" src="image?user=default&file=default.jpg" alt="User Photo">
-            <div class="user-info">
-                <span class="location-city">济州 (Jeju)</span> <a href="#" class="change-city-link">[更换城市 (Change City)]</a>
-            </div>
-        </div>
+<h1 style="display: none;">黑名单列表</h1>
 
-        <div class="weather-display">
-            <div class="weather-day">
-                <div class="date">今天12月15</div>
-                <div class="temp">晴</div>
-                <div class="temp">-14~0°C</div>
-            </div>
-            <div class="weather-day">
-                <div class="date">明天12月16</div>
-                <div class="temp">晴转多云</div>
-                <div class="temp">-15~1°C</div>
-            </div>
-            <div class="weather-day">
-                <div class="date">后天12月17</div>
-                <div class="temp">多云转晴</div>
-                <div class="temp">-13~2°C</div>
-            </div>
-        </div>
-    </div>
+<!-- 🔍 Filter Controls -->
+<div class="controls">
+    <div class="search-container">
+        <input type="text" id="searchText" placeholder="搜索姓名或电话" />
 
-    <div class="header-bottom-row">
-        <form id="contactFilterForm" class="search-bar">
-            <input type="text" id="searchText" placeholder="姓名或电话">
-
+        <div class="gender-filter">
+            <label for="genderFilter">性别:</label>
             <select id="genderFilter">
                 <option value="all">全部</option>
                 <option value="male">男</option>
                 <option value="female">女</option>
             </select>
+        </div>
 
-            <button type="button" id="filterButton" class="filter-button">筛选</button>
-        </form>
-
+        <button type="button" id="filterButton">
+            <svg fill="white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5
+        6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59
+        4.23-1.57l.27.28v.79l5 4.99L20.49
+        19l-4.99-5zm-6 0C7.01 14 5 11.99
+        5 9.5S7.01 5 9.5 5 14 7.01 14
+        9.5 11.99 14 9.5 14z"/>
+            </svg>
+        </button>
     </div>
 </div>
 
-<h1 style="display: none;">黑名单列表</h1>
-
-<div class="table-container">
+<!-- 📋 Desktop Table View -->
+<div class="table-container desktop-view">
     <table id="contactTable">
         <thead>
         <tr>
@@ -68,14 +52,14 @@
     </table>
 </div>
 
-<!-- Mobile Contact Cards Container -->
-<div id="mobileContactList"></div>
+<!-- 📱 Mobile Card View -->
+<div id="mobileContactList" class="mobile-view"></div>
 
+<!-- 🕓 Loading / Error -->
 <div class="loading-message" id="loadingMessage"></div>
-
 <p id="errorMessage"></p>
 
-<!-- 通用分页控件，放在 table 和 mobile 后面 -->
+<!-- ⏮ Pagination -->
 <div class="pagination-container">
     <button id="prevPageBtn" class="page-button">上一页</button>
     <span id="pageInfo">第 1 页</span>

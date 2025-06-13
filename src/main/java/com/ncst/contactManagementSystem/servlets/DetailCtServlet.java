@@ -17,7 +17,11 @@ public class DetailCtServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String ctId = request.getParameter("ctId");
+        int delete = Integer.parseInt(request.getParameter("isDeleted"));
 
+        System.out.println("Print ctId and delete:");
+        System.out.println(ctId);
+        System.out.println(delete);
         if (ctId == null || ctId.trim().isEmpty()) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing ctId");
             return;
@@ -32,7 +36,8 @@ public class DetailCtServlet extends HttpServlet {
 
         String[] contact;
         try {
-            contact = DBUtil.getOneContact(ctId, 0);
+            System.out.println("Start getting contact info");
+            contact = DBUtil.getOneContact(ctId, delete);
         } catch (SQLException e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error: " + e.getMessage());
             return;

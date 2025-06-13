@@ -2,7 +2,7 @@
 
 let sortDirection = 'asc'; // default sorting direction
 let currentPage = 1;
-let pageSize = 10;
+let pageSize = 7;
 let totalPages = 1;
 
 // DOM references

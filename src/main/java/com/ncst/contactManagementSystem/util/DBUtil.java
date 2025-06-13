@@ -87,6 +87,9 @@ public class DBUtil {
 
     // 5. Get one contact details
     public static String[] getOneContact(String ctId, int status) throws SQLException {
+        System.out.println("Print ctId and status inside method:");
+        System.out.println(ctId);
+        System.out.println(status);
         String sql = "SELECT ct_name, ct_mf, ct_em, ct_yb, ct_wx, ct_qq, ct_ad, ct_birth, ct_phone FROM contact_info WHERE ct_id = ? AND ct_delete = ?";
         try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, ctId);
@@ -437,7 +440,7 @@ public class DBUtil {
 
 //        System.out.println(sql);
 //        System.out.println(params);
-        System.out.println("Starting Getting Data From Database");
+//        System.out.println("Starting Getting Data From Database");
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -453,11 +456,11 @@ public class DBUtil {
             }
 
 
-            System.out.println(sql);
-            System.out.println(params);
+//            System.out.println(sql);
+//            System.out.println(params);
             ResultSet rs = stmt.executeQuery();
             List<String[]> contacts = new ArrayList<>();
-            System.out.println("Start Constructing Contacts");
+//            System.out.println("Start Constructing Contacts");
             while (rs.next()) {
                 contacts.add(new String[]{
                         rs.getString("ct_name"),
@@ -466,7 +469,7 @@ public class DBUtil {
                         rs.getString("ct_id")
                 });
             }
-            System.out.println("Getting Data Successfully");
+//            System.out.println("Getting Data Successfully");
             return contacts;
         }
     }
