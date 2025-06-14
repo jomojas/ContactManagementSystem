@@ -40,6 +40,76 @@ public class DBUtil {
         return null;
     }
 
+    // Add username and password to table user_info
+    public static int addUser(String username, String password) {
+        String checkSql = "SELECT COUNT(*) FROM user_info WHERE user_id = ?";
+        String insertSql = "INSERT INTO user_info (user_id, user_password) VALUES (?, ?)";
+
+        try (Connection conn = getConnection();
+             PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
+
+            // Check if the username already exists
+            checkStmt.setString(1, username);
+            ResultSet rs = checkStmt.executeQuery();
+            if (rs.next() && rs.getInt(1) > 0) {
+                return 1; // Username already exists
+            }
+
+            // Insert new user
+            try (PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
+                insertStmt.setString(1, username);
+                insertStmt.setString(2, password);
+
+                int rowsInserted = insertStmt.executeUpdate();
+                return rowsInserted > 0 ? 0 : -1; // 0 = success, -1 = insert failed
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1; // DB error
+        }
+    }
+
+    // Add user profile info to user_pic table
+    public static boolean addUserPic(String username, String picId, String picName) {
+        String sql = "INSERT INTO user_pic (user_id, pic_id, pic_name) VALUES (?, ?, ?)";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, username);
+            stmt.setString(2, picId);
+            stmt.setString(3, picName);
+
+            int rowsInserted = stmt.executeUpdate();
+            return rowsInserted > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Get MAX user pic_id
+    public static int getMaxUserPicID() {
+        String sql = "SELECT MAX(CAST(pic_id AS SIGNED)) AS max_id FROM user_pic";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt("max_id"); // returns 0 if null
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0; // return 0 by default if any error occurs
+    }
+
+
     // 2. Get user picture
     public static String getUserPic(String userId) throws SQLException {
         String sql = "SELECT pic_name FROM user_pic WHERE user_id = ?";
@@ -239,43 +309,34 @@ public class DBUtil {
         List<String> ctIdList = new ArrayList<>();
 
         try (Connection conn = getConnection()) {
-            // 1. 查找匹配的联系人 ct_id
-            if (searchText != null && !searchText.trim().isEmpty()) {
-                String contactSql = "SELECT ct_id FROM contact_info WHERE ct_name LIKE ?";
-                try (PreparedStatement ps = conn.prepareStatement(contactSql)) {
-                    ps.setString(1, "%" + searchText + "%");
-                    ResultSet rs = ps.executeQuery();
-                    while (rs.next()) {
-                        ctIdList.add(rs.getString("ct_id"));
-                    }
+
+            // === 1. Get ct_id from contact_info where user_id and name matches ===
+            String contactSql = "SELECT ct_id FROM contact_info WHERE user_id = ? AND ct_name LIKE ?";
+            try (PreparedStatement ps = conn.prepareStatement(contactSql)) {
+                ps.setString(1, userId);
+                ps.setString(2, "%" + searchText + "%");
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    ctIdList.add(rs.getString("ct_id"));
                 }
             }
 
-            // 2. 构建查询语句 contact_matter 表
-            StringBuilder matterSql = new StringBuilder("SELECT ct_id, matter_time, matter, matter_id, matter_delete FROM contact_matter WHERE 1=1");
-            List<Object> params = new ArrayList<>();
+            // === Return early if no matching contacts ===
+            if (ctIdList.isEmpty()) return result;
 
-            if (status != 3) { // 非 all
+            // === 2. Build query for contact_matter ===
+            StringBuilder matterSql = new StringBuilder("SELECT ct_id, matter_time, matter, matter_id, matter_delete FROM contact_matter WHERE ct_id IN (");
+            matterSql.append(String.join(",", Collections.nCopies(ctIdList.size(), "?")));
+            matterSql.append(")");
+
+            List<Object> params = new ArrayList<>(ctIdList);
+
+            if (status != 3) {
                 matterSql.append(" AND matter_delete = ?");
                 params.add(status);
             }
 
-            if (searchText != null && !searchText.trim().isEmpty()) {
-                matterSql.append(" AND (");
-                matterSql.append("matter LIKE ?");
-                params.add("%" + searchText + "%");
-
-                if (!ctIdList.isEmpty()) {
-                    matterSql.append(" OR ct_id IN (");
-                    matterSql.append(String.join(",", Collections.nCopies(ctIdList.size(), "?")));
-                    matterSql.append(")");
-                    params.addAll(ctIdList);
-                }
-
-                matterSql.append(")");
-            }
-
-            // 分页
+            // === Optional: Also filter by matter text (in addition to name) ===
             matterSql.append(" ORDER BY matter_time ASC LIMIT ?, ?");
             int offset = (currentPage - 1) * pageSize;
             params.add(offset);

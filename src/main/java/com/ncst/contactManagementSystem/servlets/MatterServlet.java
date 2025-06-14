@@ -48,6 +48,7 @@ public class MatterServlet extends HttpServlet {
 
         try {
             System.out.println("Start getting matters");
+            System.out.println(userId);
             List<String[]> matters = DBUtil.getFilteredMatter(userId, keyword, status, page, pageSize);
             int total = DBUtil.countFilteredMatter(userId, keyword, status);
 
