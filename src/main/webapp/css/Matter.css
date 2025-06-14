@@ -35,7 +35,7 @@ body {
     font-size: 1rem;
     border: 1.5px solid #ccc;
     border-radius: 6px;
-    transition: border-color 0.2s ease-in-out;
+    transition: border-color 0.3s ease-in-out;
 }
 
 .search-container input#matterSearch:focus {
@@ -62,7 +62,7 @@ body {
     border: 1.5px solid #ccc;
     font-size: 1rem;
     cursor: pointer;
-    transition: border-color 0.2s ease-in-out;
+    transition: border-color 0.3s ease-in-out;
 }
 
 .status-filter select:focus {
@@ -143,7 +143,6 @@ th {
 
 /* 时间排序指示箭头 */
 #timeHeader::after {
-    content: ' ▲▼';
     font-size: 0.8rem;
     color: #94a3b8;
     user-select: none;

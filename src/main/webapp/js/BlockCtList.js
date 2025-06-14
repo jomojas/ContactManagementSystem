@@ -1,5 +1,5 @@
 /**
- * Blocked Contact List Management Script with Pagination
+ * Blocked Contact List Management Script with Pagination and Sortable Name Column
  */
 
 // DOM Elements
@@ -13,10 +13,12 @@ const loadingMessage = document.getElementById('loadingMessage');
 const prevPageBtn = document.getElementById('prevPageBtn');
 const nextPageBtn = document.getElementById('nextPageBtn');
 const pageInfo = document.getElementById('pageInfo');
+const nameHeader = document.getElementById('nameHeader');
 
 let currentSearch = '';
 let currentGender = 'all';
 let currentPage = 1;
+let sortDirection = 'asc';  // <-- added sort direction
 const pageSize = 7;
 let pageCount = 1;
 
@@ -46,12 +48,25 @@ function setupEventListeners() {
             updateBlockedContacts();
         }
     });
+
+    nameHeader?.addEventListener('click', toggleSortDirection);  // <-- enable sort toggle
+}
+
+function toggleSortDirection() {
+    sortDirection = (sortDirection === 'asc') ? 'desc' : 'asc';
+    nameHeader.textContent = sortDirection === 'asc' ? "姓名 ▲▼" : "姓名 ▼▲";
+    updateBlockedContacts();
 }
 
 function updateBlockedContacts() {
     showLoadingState();
 
-    const url = `/ContactManagementSystem/blockedContacts?searchText=${encodeURIComponent(currentSearch)}&genderFilter=${encodeURIComponent(currentGender)}&page=${currentPage}&pageSize=${pageSize}`;
+    const url = `/ContactManagementSystem/blockedContacts?` +
+        `searchText=${encodeURIComponent(currentSearch)}` +
+        `&genderFilter=${encodeURIComponent(currentGender)}` +
+        `&page=${currentPage}` +
+        `&pageSize=${pageSize}` +
+        `&sort=name&direction=${sortDirection}`;  // <-- added sort param
 
     fetch(url)
         .then(res => {
