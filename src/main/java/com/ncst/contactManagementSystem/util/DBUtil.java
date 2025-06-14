@@ -434,13 +434,12 @@ public class DBUtil {
         }
 
         // Add pagination
-        sql += " LIMIT ?, ?";
+        sql += " ORDER BY CONVERT(ct_name USING gbk) LIMIT ?, ?";
         params.add(String.valueOf(offset));
         params.add(String.valueOf(pageSize));
 
-//        System.out.println(sql);
-//        System.out.println(params);
-//        System.out.println("Starting Getting Data From Database");
+        System.out.println(sql);
+        System.out.println("Starting Getting Data From Database");
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -456,11 +455,8 @@ public class DBUtil {
             }
 
 
-//            System.out.println(sql);
-//            System.out.println(params);
             ResultSet rs = stmt.executeQuery();
             List<String[]> contacts = new ArrayList<>();
-//            System.out.println("Start Constructing Contacts");
             while (rs.next()) {
                 contacts.add(new String[]{
                         rs.getString("ct_name"),
@@ -469,7 +465,6 @@ public class DBUtil {
                         rs.getString("ct_id")
                 });
             }
-//            System.out.println("Getting Data Successfully");
             return contacts;
         }
     }

@@ -6,6 +6,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 
 @WebServlet("/blockedContacts")
@@ -30,6 +31,7 @@ public class BlockContactListServlet extends HttpServlet {
             String genderFilter = request.getParameter("genderFilter");
             String pageParam = request.getParameter("page");
             String pageSizeParam = request.getParameter("pageSize");
+            String direction = request.getParameter("direction");
 
             int page = (pageParam != null) ? Integer.parseInt(pageParam) : 1;
             int pageSize = (pageSizeParam != null) ? Integer.parseInt(pageSizeParam) : 10;
@@ -37,6 +39,10 @@ public class BlockContactListServlet extends HttpServlet {
 
             List<String[]> blockedContacts = DBUtil.getFilteredContact(userId, searchText, genderFilter, offset, pageSize, 1);
             int total = DBUtil.countFilteredContact(userId, searchText, genderFilter, 1);
+
+            if ("desc".equalsIgnoreCase(direction)) {
+                Collections.reverse(blockedContacts);
+            }
 
             sendJsonResponse(response, blockedContacts, total);
 

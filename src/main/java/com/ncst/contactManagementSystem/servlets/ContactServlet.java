@@ -7,6 +7,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 
 @WebServlet("/contacts")
@@ -14,6 +15,7 @@ public class ContactServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
+        System.out.println("In ContactServlet");
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
 
@@ -33,18 +35,24 @@ public class ContactServlet extends HttpServlet {
             String genderFilter = request.getParameter("genderFilter");
             String pageParam = request.getParameter("page");
             String pageSizeParam = request.getParameter("pageSize");
+            String direction = request.getParameter("direction");
 
-//            System.out.println(pageSizeParam);
+            System.out.println("direction:" + direction);
+
             int page = (pageParam != null) ? Integer.parseInt(pageParam) : 1;
             int pageSize = (pageSizeParam != null) ? Integer.parseInt(pageSizeParam) : 10;
             int offset = (page - 1) * pageSize;
 
-//            System.out.println("pageSize: " + pageSize);
-//            System.out.println("Start Calling Get Method");
+            System.out.println("Start getting contacts");
             // status = 0: not blocked
             List<String[]> contacts = DBUtil.getFilteredContact(userId, searchText, genderFilter, offset, pageSize, 0);
             int total = DBUtil.countFilteredContact(userId, searchText, genderFilter, 0);
-//            System.out.println("total" + total);
+
+            System.out.println("Start Sorting Contacts");
+
+            if ("desc".equalsIgnoreCase(direction)) {
+                Collections.reverse(contacts);
+            }
 
             sendJsonResponse(response, contacts, total);
 
