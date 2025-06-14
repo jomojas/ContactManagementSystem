@@ -102,6 +102,27 @@ function setupEventListeners() {
     nameHeader?.addEventListener('click', toggleSortDirection);
 
     changeCityBtn?.addEventListener('click', showCityInputModal);
+
+    document.getElementById('logoutBtn')?.addEventListener('click', async () => {
+        const confirmLogout = confirm('确定要退出登录吗？');
+        if (!confirmLogout) return;
+
+        try {
+            const response = await fetch('/ContactManagementSystem/logout', {
+                method: 'POST',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                window.location.href = 'Login.html';
+            } else {
+                alert('退出失败，请稍后重试。');
+            }
+        } catch (error) {
+            console.error('Logout error:', error);
+            alert('网络错误，无法退出登录。');
+        }
+    });
 }
 
 function toggleSortDirection() {
