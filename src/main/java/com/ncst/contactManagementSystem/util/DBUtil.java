@@ -306,49 +306,68 @@ public class DBUtil {
 
     public static List<String[]> getFilteredMatter(String userId, String searchText, int status, int currentPage, int pageSize) throws SQLException {
         List<String[]> result = new ArrayList<>();
+        boolean hasKeyword = searchText != null && !searchText.trim().isEmpty();
         List<String> ctIdList = new ArrayList<>();
 
         try (Connection conn = getConnection()) {
-
-            // === 1. Get ct_id from contact_info where user_id and name matches ===
-            String contactSql = "SELECT ct_id FROM contact_info WHERE user_id = ? AND ct_name LIKE ?";
-            try (PreparedStatement ps = conn.prepareStatement(contactSql)) {
-                ps.setString(1, userId);
-                ps.setString(2, "%" + searchText + "%");
-                ResultSet rs = ps.executeQuery();
-                while (rs.next()) {
-                    ctIdList.add(rs.getString("ct_id"));
+            // Step 1: Get ct_ids whose ct_name matches keyword
+            if (hasKeyword) {
+                String contactSql = "SELECT ct_id FROM contact_info WHERE user_id = ? AND ct_name LIKE ?";
+                try (PreparedStatement ps = conn.prepareStatement(contactSql)) {
+                    ps.setString(1, userId);
+                    ps.setString(2, "%" + searchText + "%");
+                    ResultSet rs = ps.executeQuery();
+                    while (rs.next()) {
+                        ctIdList.add(rs.getString("ct_id"));
+                    }
                 }
             }
 
-            // === Return early if no matching contacts ===
-            if (ctIdList.isEmpty()) return result;
+            // Step 2: Build SQL for matters
+            StringBuilder sql = new StringBuilder(
+                    "SELECT cm.ct_id, cm.matter_time, cm.matter, cm.matter_id, cm.matter_delete " +
+                            "FROM contact_matter cm JOIN contact_info ci ON cm.ct_id = ci.ct_id " +
+                            "WHERE ci.user_id = ?"
+            );
+            List<Object> params = new ArrayList<>();
+            params.add(userId);
 
-            // === 2. Build query for contact_matter ===
-            StringBuilder matterSql = new StringBuilder("SELECT ct_id, matter_time, matter, matter_id, matter_delete FROM contact_matter WHERE ct_id IN (");
-            matterSql.append(String.join(",", Collections.nCopies(ctIdList.size(), "?")));
-            matterSql.append(")");
+            // Keyword condition
+            if (hasKeyword) {
+                sql.append(" AND (");
 
-            List<Object> params = new ArrayList<>(ctIdList);
+                // ct_name LIKE ?
+                if (!ctIdList.isEmpty()) {
+                    sql.append("cm.ct_id IN (");
+                    sql.append(String.join(",", Collections.nCopies(ctIdList.size(), "?")));
+                    sql.append(") OR ");
+                    params.addAll(ctIdList);
+                }
 
+                // matter LIKE ?
+                sql.append("cm.matter LIKE ?)");
+                params.add("%" + searchText + "%");
+            }
+
+            // Status filter
             if (status != 3) {
-                matterSql.append(" AND matter_delete = ?");
+                sql.append(" AND cm.matter_delete = ?");
                 params.add(status);
             }
 
-            // === Optional: Also filter by matter text (in addition to name) ===
-            matterSql.append(" ORDER BY matter_time ASC LIMIT ?, ?");
+            // Pagination
+            sql.append(" ORDER BY cm.matter_time ASC LIMIT ?, ?");
             int offset = (currentPage - 1) * pageSize;
             params.add(offset);
             params.add(pageSize);
 
-            try (PreparedStatement ps = conn.prepareStatement(matterSql.toString())) {
-                int index = 1;
-                for (Object value : params) {
-                    if (value instanceof Integer) {
-                        ps.setInt(index++, (Integer) value);
+            try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+                int idx = 1;
+                for (Object param : params) {
+                    if (param instanceof Integer) {
+                        ps.setInt(idx++, (Integer) param);
                     } else {
-                        ps.setString(index++, value.toString());
+                        ps.setString(idx++, param.toString());
                     }
                 }
 
@@ -368,15 +387,15 @@ public class DBUtil {
         return result;
     }
 
-
-
     public static int countFilteredMatter(String userId, String keyword, int status) throws SQLException {
         int total = 0;
         List<String> ctIdList = new ArrayList<>();
+        boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
 
         try (Connection conn = getConnection()) {
-            // 1. 查找匹配联系人 ct_id
-            if (keyword != null && !keyword.trim().isEmpty()) {
+
+            // Step 1: Get ct_ids from ct_name LIKE keyword (optional)
+            if (hasKeyword) {
                 String contactSql = "SELECT ct_id FROM contact_info WHERE user_id = ? AND ct_name LIKE ?";
                 try (PreparedStatement ps = conn.prepareStatement(contactSql)) {
                     ps.setString(1, userId);
@@ -388,28 +407,34 @@ public class DBUtil {
                 }
             }
 
-            // 2. 构建计数查询 contact_matter 表
-            StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM contact_matter WHERE 1=1");
+            // Step 2: Build main SQL: count from contact_matter + JOIN contact_info
+            StringBuilder sql = new StringBuilder(
+                    "SELECT COUNT(*) FROM contact_matter cm " +
+                            "JOIN contact_info ci ON cm.ct_id = ci.ct_id " +
+                            "WHERE ci.user_id = ?"
+            );
             List<Object> params = new ArrayList<>();
+            params.add(userId);
 
-            if (status != 3) { // 3 means all statuses
-                sql.append(" AND matter_delete = ?");
-                params.add(status);
-            }
-
-            if (keyword != null && !keyword.trim().isEmpty()) {
+            if (hasKeyword) {
                 sql.append(" AND (");
-                sql.append("matter LIKE ?");
-                params.add("%" + keyword + "%");
 
+                // Either ct_name match → ct_id IN (...)
                 if (!ctIdList.isEmpty()) {
-                    sql.append(" OR ct_id IN (");
+                    sql.append("cm.ct_id IN (");
                     sql.append(String.join(",", Collections.nCopies(ctIdList.size(), "?")));
-                    sql.append(")");
+                    sql.append(") OR ");
                     params.addAll(ctIdList);
                 }
 
-                sql.append(")");
+                // Or matter LIKE ?
+                sql.append("cm.matter LIKE ?)");
+                params.add("%" + keyword + "%");
+            }
+
+            if (status != 3) {
+                sql.append(" AND cm.matter_delete = ?");
+                params.add(status);
             }
 
             try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
@@ -431,6 +456,7 @@ public class DBUtil {
 
         return total;
     }
+
 
 
     // 17. Delete matter

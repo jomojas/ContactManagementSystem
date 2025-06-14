@@ -82,6 +82,22 @@ body {
     color: #666;
 }
 
+/* log out button */
+.logout-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.logout-button:hover {
+  background-color: #0056b3;
+}
+
 /* Search Bar */
 .search-bar {
     display: flex;
