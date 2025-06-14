@@ -41,12 +41,9 @@ public class ImageServlet extends HttpServlet {
             mimeType = "application/octet-stream";
         }
 
-//        System.out.println("Setting Content Type and ContentLength");
         response.setContentType(mimeType);
-//        response.setContentLengthLong(imageFile.length());
         response.setContentLength((int) imageFile.length());
 
-//        System.out.println("Sending Image Content to Client");
         // Send image content to client
         try (FileInputStream fis = new FileInputStream(imageFile);
              OutputStream out = response.getOutputStream()) {
@@ -56,6 +53,5 @@ public class ImageServlet extends HttpServlet {
                 out.write(buffer, 0, bytesRead);
             }
         }
-//        System.out.println("Image uploaded successfully");
     }
 }

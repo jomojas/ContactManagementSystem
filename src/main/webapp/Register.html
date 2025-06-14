@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册页面</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/Register.css" />
+</head>
+<body>
+
+<div class="center-container">
+    <div class="register-container">
+        <h2>注册账户</h2>
+
+        <form id="registerForm" enctype="multipart/form-data" onsubmit="return false;">
+            <!-- Profile Photo Upload -->
+            <div class="profile-photo-upload">
+                <label for="profilePhotoInput">
+                    <img id="profilePhotoPreview" src="image?user=default&file=default.jpg" alt="Profile Photo">
+                    <input type="file" id="profilePhotoInput" name="photo" accept="image/*" style="display: none;">
+                </label>
+            </div>
+
+            <!-- Username -->
+            <div class="form-group">
+                <label for="username">用户名:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+                <label for="password">密码:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="form-group">
+                <label for="confirmPassword">确认密码:</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit">注册</button>
+
+            <!-- Error Message -->
+            <p id="errorMessage" style="color: red;"></p>
+        </form>
+
+        <!-- Link to login -->
+        <a class="back-link" href="Login.html">已有账号？返回登录</a>
+    </div>
+</div>
+
+<script type="module" src="js/Register.js"></script>
+</body>
+</html>

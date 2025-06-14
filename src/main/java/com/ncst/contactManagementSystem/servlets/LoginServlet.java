@@ -17,7 +17,6 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
-//        response.setContentType("text/html;charset=UTF-8");
         response.setContentType("application/json;charset=UTF-8");
 
         String userId = request.getParameter("username");
@@ -25,11 +24,10 @@ public class LoginServlet extends HttpServlet {
 
         if(userId == null) {
             System.out.println("Empty user");
-
         }
+
         if(password == null) {
             System.out.println("Empty user");
-
         }
 
         if (userId == null || password == null || userId.trim().isEmpty() || password.trim().isEmpty()) {
@@ -40,8 +38,6 @@ public class LoginServlet extends HttpServlet {
 
         try {
             String storedPassword = DBUtil.getUser(userId);
-
-//            response.setContentType("application/json;charset=UTF-8");
 
             if (storedPassword != null && storedPassword.equals(password)) {
                 // 1. Invalidate old session if any
@@ -70,7 +66,6 @@ public class LoginServlet extends HttpServlet {
         } catch (SQLException e) {
             e.printStackTrace();
 
-//            response.setContentType("application/json;charset=UTF-8");
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // 500
             response.getWriter().write("{\"status\":\"error\", \"message\":\"数据库错误，请稍后再试\"}");
         }
