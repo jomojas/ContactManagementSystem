@@ -22,6 +22,26 @@ body {
     box-sizing: border-box;
 }
 
+.return-main-page {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 5px;
+  background-color: #f1f5f9;
+  color: #1f2937;
+  text-decoration: none;
+  border: 1px solid #d1d5db;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.return-main-page:hover {
+  background-color: #e2e8f0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 h1 {
     text-align: center;
     color: #007bff;
