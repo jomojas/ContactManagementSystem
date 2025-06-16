@@ -16,37 +16,45 @@ body {
 /* ======= Controls (Search & Filter) ======= */
 .controls {
   background: #fff;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
   padding: 1rem 1.25rem;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   margin-bottom: 1.5rem;
+  flex-wrap: wrap; /* Allows wrapping on small screens */
 }
+
+.return-main-page {
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  background-color: #e0e7ff;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  border: 1px solid #d1d5db;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.return-main-page:hover {
+  background-color: #3b82f6;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 .search-container {
   display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
   align-items: center;
-  justify-content: space-between;
+  gap: 1rem;
+  flex: 1 1 auto; /* Take remaining space */
 }
 
 #searchText {
-  flex: 2 1 0;
-  min-width: 150px;
-  padding: 0.6rem 1rem;
-  border: 1.5px solid #ccc;
-  border-radius: 6px;
-  font-size: 1rem;
-  transition: border-color 0.3s ease-in-out;
-}
-
-#searchText:focus {
-    outline: none;
-    border-color: #3b82f6; /* 蓝色焦点 */
-    box-shadow: 0 0 6px rgba(59,130,246,0.5);
-}
-
-#genderFilter {
-  flex: 1 1 0;
+  flex: 1 1 45%;
   min-width: 120px;
   padding: 0.6rem 1rem;
   border: 1.5px solid #ccc;
@@ -55,10 +63,10 @@ body {
   transition: border-color 0.3s ease-in-out;
 }
 
-#genderFilter:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 6px rgba(59,130,246,0.4);
+#searchText:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 6px rgba(59,130,246,0.5);
 }
 
 .gender-filter {
@@ -66,6 +74,21 @@ body {
   align-items: center;
   gap: 0.5rem;
   white-space: nowrap;
+  flex: 0 0 auto;
+}
+
+#genderFilter {
+  padding: 0.6rem 1rem;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease-in-out;
+}
+
+#genderFilter:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 6px rgba(59,130,246,0.4);
 }
 
 #filterButton {
@@ -89,6 +112,7 @@ body {
   width: 20px;
   height: 20px;
 }
+
 
 /* ======= Table View ======= */
 .table-container {
