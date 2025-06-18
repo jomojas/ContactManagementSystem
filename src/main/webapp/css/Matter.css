@@ -187,10 +187,15 @@ tbody tr:hover {
     border: none;
     cursor: pointer;
     font-size: 0.9rem;
+    font-weight: bold;
     transition: background-color 0.3s ease;
-    color: #fff;
+    color: #1e3a8a;
     white-space: nowrap;
     user-select: none;
+}
+
+.action-button:disabled {
+    font-weight: normal;
 }
 
 .action-button.complete-button {
@@ -199,6 +204,7 @@ tbody tr:hover {
 
 .action-button.complete-button:not(:disabled):hover {
     background-color: #2563eb;
+    color: #fff;
 }
 
 .action-button.cancel-button {
@@ -207,6 +213,7 @@ tbody tr:hover {
 
 .action-button.cancel-button:not(:disabled):hover {
     background-color: #2563eb;
+    color: #fff;
 }
 
 .action-button:disabled {
@@ -256,18 +263,24 @@ tbody tr:hover {
 .mobile-action-button {
     flex: 1;
     background-color: #3b82f6;
-    color: white;
+    color: #1e3a8a;
     border: none;
     border-radius: 6px;
     padding: 0.5rem 0;
     font-size: 0.95rem;
+    font-weight: bold;
     cursor: pointer;
     transition: background-color 0.25s ease;
     user-select: none;
 }
 
+.mobile-action-button:disabled {
+    font-weight: normal;
+}
+
 .mobile-action-button:hover {
     background-color: #2563eb;
+    color: #fff;
 }
 
 /* Page Elements */
@@ -281,7 +294,8 @@ tbody tr:hover {
 
 .page-button {
     background-color: #e0e7ff;
-    color: white;
+    color: #1e3a8a;
+    font-weight: bold;
     border: none;
     padding: 0.4rem 1rem;
     border-radius: 4px;
@@ -290,6 +304,7 @@ tbody tr:hover {
 
 .page-button:not(:disabled):hover {
     background-color: #2563eb;
+    color: #fff;
 }
 
 .page-button:disabled {

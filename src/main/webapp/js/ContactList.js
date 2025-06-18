@@ -27,14 +27,12 @@ let totalPages = 1;
 document.addEventListener('DOMContentLoaded', initContactList);
 
 async function initContactList() {
-    loadUserProfileImage();
-    setupEventListeners();
-    updateContacts();
-
+    loadUserProfileImage(); // 1.加载用户头像
+    setupEventListeners();  // 2.初始化事件监听
+    updateContacts();       // 3.获取联系人数据
     try {
         const res = await fetch('/ContactManagementSystem/GetCity');
         const cityData = await res.json();
-
         if (cityData.name && cityData.lat && cityData.lon) {
             locationCitySpan.textContent = cityData.name;
             loadWeather(cityData.name, cityData.lat, cityData.lon);
@@ -171,9 +169,9 @@ function showLoadingState() {
 }
 
 function renderContacts(contacts) {
-    renderTableContacts(contacts);
-    renderMobileContacts(contacts);
-    attachButtonListeners();
+    renderTableContacts(contacts);  // PC端表格渲染
+    renderMobileContacts(contacts); // 移动端卡片渲染
+    attachButtonListeners();        // 统一绑定事件
 }
 
 function renderTableContacts(contacts) {
@@ -402,7 +400,7 @@ function loadWeather(city, lat = null, lon = null) {
             weatherDisplay.innerHTML = data.forecast.map(day => `
                 <div class="weather-day">
                     <div class="date">${day.date}</div>
-                    <div class="temp">${day.weather}</div>
+                    <div class="weather">${day.weather}</div>
                     <div class="temp">${day.temp}</div>
                 </div>
             `).join("");

@@ -110,51 +110,6 @@ public class DBUtil {
     }
 
 
-    // 2. Get user picture
-    public static String getUserPic(String userId) throws SQLException {
-        String sql = "SELECT pic_name FROM user_pic WHERE user_id = ?";
-        try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, userId);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getString("pic_name");
-            }
-        }
-        return null;
-    }
-
-    // 3. Get total pages of contacts
-    public static int getTotalContactPage(String userId, int perPage, int status) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM contact_info WHERE user_id = ? AND ct_delete = ?";
-        try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, userId);
-            stmt.setInt(2, status);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                int total = rs.getInt(1);
-                return (int) Math.ceil(total / (double) perPage);
-            }
-        }
-        return 0;
-    }
-
-    // 4. Get contacts
-    public static List<String[]> getContact(String userId, int page, int perPage, int status) throws SQLException {
-        String sql = "SELECT ct_name, ct_mf, ct_phone, ct_id FROM contact_info WHERE user_id = ? AND ct_delete = ? LIMIT ?, ?";
-        List<String[]> list = new ArrayList<>();
-        try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, userId);
-            stmt.setInt(2, status);
-            stmt.setInt(3, (page - 1) * perPage);
-            stmt.setInt(4, perPage);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                list.add(new String[]{rs.getString("ct_name"), rs.getString("ct_mf"), rs.getString("ct_phone"), rs.getString("ct_id")});
-            }
-        }
-        return list;
-    }
-
     // 5. Get one contact details
     public static String[] getOneContact(String ctId, int status) throws SQLException {
         System.out.println("Print ctId and status inside method:");
@@ -267,40 +222,6 @@ public class DBUtil {
             stmt.setString(1, ctId);
             return stmt.executeUpdate() > 0;
         }
-    }
-
-    // 15. Get all user matters
-    public static List<String[]> getMatterUser(String userId, int status) throws SQLException {
-        String sql = "SELECT ci.ct_name, matter_time, matter FROM contact_matter cm JOIN contact_info ci ON cm.ct_id = ci.ct_id WHERE ci.user_id = ? AND matter_delete = ?";
-        List<String[]> list = new ArrayList<>();
-        try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, userId);
-            stmt.setInt(2, status);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                list.add(new String[]{rs.getString(1), rs.getString(2), rs.getString(3)});
-            }
-        }
-        return list;
-    }
-
-    // 16. Get all matters of a status
-    public static List<String[]> getMatter(int status) throws SQLException {
-        String sql = "SELECT ct_id, matter_time, matter, matter_id FROM contact_matter WHERE matter_delete = ?";
-        List<String[]> list = new ArrayList<>();
-        try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, status);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                list.add(new String[]{
-                        rs.getString("ct_id"),
-                        rs.getString("matter_time"),
-                        rs.getString("matter"),
-                        rs.getString("matter_id")
-                });
-            }
-        }
-        return list;
     }
 
 

@@ -9,7 +9,7 @@ body {
 
 /* --- Header Section Styling --- */
 .header {
-    background-color: #ffffff;
+    background-color: #fff;
     padding: 1rem 1.25rem;
     margin: 1rem;
     margin-bottom: 1.5rem;
@@ -19,7 +19,6 @@ body {
     flex-direction: column;
     gap: 1rem;
 }
-
 
 .header-top-row,
 .header-bottom-row {
@@ -51,7 +50,7 @@ body {
 }
 .user-info .change-city-link {
     font-size: 0.85em;
-    color: #007bff;
+    color: #3b82f6;
     text-decoration: none;
 }
 
@@ -68,34 +67,42 @@ body {
     padding: 5px 8px;
     border: 1px solid #eee;
     border-radius: 5px;
-    background-color: #f9f9f9;
+    background-color: #e0e7ff;
     flex-shrink: 0;
     min-width: 90px;
 }
 .weather-day .date {
     font-weight: bold;
     font-size: 0.9em;
-    color: #333;
+    color: #1e3a8a;
+}
+.weather-day .weather {
+    font-weight: bold;
+    font-size: 0.9em;
+    color: #1e3a8a;
 }
 .weather-day .temp {
+    font-weight: bold;
     font-size: 0.8em;
-    color: #666;
+    color: #1e3a8a;
 }
 
 /* log out button */
 .logout-button {
-  background-color: #007bff;
-  color: white;
+  background-color: #e0e7ff;
+  color: #1e3a8a;
   border: none;
   padding: 6px 12px;
   border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
+  font-weight: bold;
   transition: background-color 0.2s ease;
 }
 
 .logout-button:hover {
-  background-color: #0056b3;
+  background-color: #3b82f6;
+  color: #fff;
 }
 
 /* Search Bar */
@@ -112,6 +119,12 @@ body {
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 1em;
+    transition: border-color 0.3s ease-in-out;
+}
+.search-bar input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 6px rgba(59,130,246,0.5);
 }
 .search-bar select {
     padding: 8px 12px;
@@ -119,18 +132,26 @@ body {
     border-radius: 4px;
     font-size: 1em;
     background-color: white;
+    transition: border-color 0.3s ease-in-out;
+}
+.search-bar select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 6px rgba(59,130,246,0.4);
 }
 .filter-button {
     padding: 8px 15px;
-    background-color: #007bff;
-    color: white;
+    background-color: #e0e7ff;
+    color: #1e3a8a;
+    font-weight: bold;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     white-space: nowrap;
 }
 .filter-button:hover {
-    background-color: #0056b3;
+    background-color: #3b82f6;
+    color: #fff;
 }
 
 /* Action Buttons */
@@ -142,7 +163,8 @@ body {
     justify-content: flex-end;
 }
 .action-button-svg {
-    background-color: #007bff;
+    background-color: #e0e7ff;
+    color: #1e3a8a;
     border: none;
     border-radius: 50%;
     width: 40px;
@@ -151,6 +173,9 @@ body {
     justify-content: center;
     align-items: center;
     cursor: pointer;
+}
+.action-button-svg:hover {
+    background-color: #3b82f6;
 }
 
 /* --- Main Content Styling --- */
@@ -183,14 +208,23 @@ th, td {
     text-align: left;
 }
 th {
-    background-color: #007bff;
-    color: white;
-}
-tbody tr:nth-child(even) {
-    background-color: #f8f8f8;
+    background-color: #e0e7ff;
+    color: #000;
 }
 tbody tr:hover {
-    background-color: #f0f0f0;
+    background-color: #f1f5f9;
+}
+
+#nameHeader {
+    cursor: pointer;
+    user-select: none;
+    color: #1e40af;
+    font-weight: 700;
+    transition: color 0.3s ease;
+}
+
+#nameHeader:hover {
+    color: #2563eb;
 }
 
 /* Action Buttons in Table */
@@ -201,11 +235,24 @@ tbody tr:hover {
     border-radius: 4px;
     cursor: pointer;
     font-size: 0.9em;
-    color: white;
+    font-weight: bold;
+    color: #1e3a8a;
 }
-.details-button { background-color: #28a745; }
-.block-button { background-color: #dc3545; }
-.add-matter-button { background-color: #17a2b8; }
+.details-button { background-color: #e0e7ff; }
+.block-button { background-color: #e0e7ff; }
+.add-matter-button { background-color: #e0e7ff; }
+.details-button:hover {
+    background-color: #3b82f6;
+    color: #fff;
+}
+.block-button:hover {
+    background-color: #3b82f6;
+    color: #fff;
+}
+.add-matter-button:hover {
+     background-color: #3b82f6;
+     color: #fff;
+}
 
 /* Mobile Card View */
 .mobile-contact-card {
@@ -242,6 +289,13 @@ tbody tr:hover {
     flex: 1;
     padding: 8px;
     font-size: 0.8em;
+    font-weight: bold;
+    background-color: #e0e7ff;
+    color: #1e3a8a;
+}
+.mobile-contact-action button:hover {
+    background-color: #3b82f6;
+    color: #fff;
 }
 
 /* Dropdown for more actions */
@@ -250,8 +304,9 @@ tbody tr:hover {
     display: inline-block;
 }
 .mobile-dropdown-btn {
-    background-color: #6c757d;
-    color: white;
+    background-color: #e0e7ff;
+    color: #1e3a8a;
+    font-weight: bold;
     padding: 8px;
     border: none;
     border-radius: 4px;
@@ -262,7 +317,8 @@ tbody tr:hover {
     display: none;
     position: absolute;
     right: 0;
-    background-color: #f9f9f9;
+    background-color: #e0e7ff;
+    font-weight: bold;
     min-width: 120px;
     box-shadow: 0 8px 16px rgba(0,0,0,0.2);
     z-index: 1;
@@ -276,41 +332,50 @@ tbody tr:hover {
     width: 100%;
     text-align: left;
     border: none;
-    background: none;
+    background-color: #e0e7ff;
+    font-weight: bold;
 }
 .mobile-dropdown-content button:hover {
-    background-color: #ddd;
+    background-color: #3b82f6;
+    color: #fff;
 }
 
 /* Page Elements */
- .pagination-container {
-     margin-top: 1rem;
-     display: flex;
-     justify-content: center;
-     align-items: center;
-     gap: 1rem;
- }
+.pagination-container {
+ margin-top: 1rem;
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ gap: 1rem;
+}
 
- .page-button {
-     background-color: #007bff;
-     color: white;
-     border: none;
-     padding: 0.4rem 1rem;
-     border-radius: 4px;
-     cursor: pointer;
- }
+.page-button {
+ background-color: #e0e7ff;
+ color: #1e3a8a;
+ font-weight: bold;
+ border: none;
+ padding: 0.4rem 1rem;
+ border-radius: 4px;
+ cursor: pointer;
+}
 
- .page-button:disabled {
-     background-color: #ccc;
-     cursor: not-allowed;
- }
+.page-button:hover {
+    background-color: #3b82f6;
+    color: #fff;
+}
 
- #pageInfo, #mobilePageInfo {
-     font-weight: bold;
- }
+.page-button:disabled {
+ background-color: #cbd5e1;
+ cursor: not-allowed;
+}
+
+#pageInfo, #mobilePageInfo {
+ font-weight: bold;
+}
 
 
 /* Responsive adjustments */
+/* 移动端样式 (≤768px) */
 @media (max-width: 768px) {
     .header {
         padding: 10px;
@@ -346,6 +411,7 @@ tbody tr:hover {
     }
 }
 
+/* 桌面端样式 (≥769px) */
 @media (min-width: 769px) {
     .mobile-contact-card {
         display: none !important;
