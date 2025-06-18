@@ -69,9 +69,6 @@ public class WeatherServlet extends HttpServlet {
                 "&lon=" + URLEncoder.encode(lon, "UTF-8") +
                 "&appid=" + API_KEY +
                 "&units=metric&lang=zh_cn";
-
-        System.out.println("Calling forecast API: " + apiUrl);
-
         try {
             URL url = new URL(apiUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();

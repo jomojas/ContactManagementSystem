@@ -93,6 +93,90 @@ function loadContactDetails(ctId, isDeleted) {
 function updateContact(ctId) {
     showLoading(true);
     const form = document.getElementById('addContactForm');
+
+    // === 收集输入值 ===
+    const name = document.getElementById('name').value.trim();
+    const address = document.getElementById('address').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const qq = document.getElementById('qq').value.trim();
+    const wechat = document.getElementById('wechat').value.trim();
+    const postalCode = document.getElementById('postalCode').value.trim();
+    const phoneNumber = document.getElementById('phoneNumber').value.trim();
+
+    // === 字段长度验证 ===
+    if (name.length > 10) {
+        showError('姓名长度不能超过10个字符');
+        showLoading(false);
+        return;
+    }
+    if (address.length > 100) {
+        showError('地址长度不能超过100个字符');
+        showLoading(false);
+        return;
+    }
+    if (qq.length > 11) {
+        showError('QQ号码长度不能超过11位');
+        showLoading(false);
+        return;
+    }
+    if (wechat.length > 20) {
+        showError('微信号长度不能超过20个字符');
+        showLoading(false);
+        return;
+    }
+    if (email.length > 50) {
+        showError('邮箱长度不能超过50个字符');
+        showLoading(false);
+        return;
+    }
+    if (phoneNumber.length > 11) {
+        showError('电话号码长度不能超过11位');
+        showLoading(false);
+        return;
+    }
+    if (postalCode.length > 6) {
+        showError('邮编长度不能超过6位');
+        showLoading(false);
+        return;
+    }
+
+    // === 格式验证 ===
+    // QQ验证（纯数字）
+    if (!/^\d+$/.test(qq)) {
+        showError('QQ号码只能包含数字');
+        showLoading(false);
+        return;
+    }
+
+    // 微信验证（字母、数字和下划线）
+    if (!/^[a-zA-Z0-9_]+$/.test(wechat)) {
+        showError('微信号只能包含字母、数字和下划线(_)');
+        showLoading(false);
+        return;
+    }
+
+    // 电话号码验证（纯数字）
+    if (!/^\d+$/.test(phoneNumber)) {
+        showError('电话号码只能包含数字');
+        showLoading(false);
+        return;
+    }
+
+    // 邮编验证（纯数字）
+    if (postalCode && !/^\d+$/.test(postalCode)) {
+        showError('邮编只能包含数字');
+        showLoading(false);
+        return;
+    }
+
+    // 邮箱验证（基础格式，允许字母、数字、下划线和常见邮箱符号）
+    if (!/^[\w.%+-]+@[\w.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+        showError('请输入有效的邮箱地址（可包含字母、数字、下划线和常见符号）');
+        showLoading(false);
+        return;
+    }
+
+    // === 表单提交 ===
     const formData = new FormData(form);
     formData.append('ctId', ctId);
 
@@ -100,22 +184,21 @@ function updateContact(ctId) {
         method: 'POST',
         body: formData
     })
-        .then(response => {
-            if (!response.ok) {
-                return response.text().then(text => { throw new Error(text); });
-            }
-            return response.text();
-        })
-        .then(message => {
-            alert('联系人更新成功');
-            // Redirect to ContactList.html after successful update
-            window.location.href = 'ContactList.html';
-        })
-        .catch(error => {
-            console.error('Error updating contact:', error);
-            showError('更新失败: ' + error.message);
-            showLoading(false);
-        });
+    .then(response => {
+        if (!response.ok) {
+            return response.text().then(text => { throw new Error(text); });
+        }
+        return response.text();
+    })
+    .then(message => {
+        alert('联系人更新成功');
+        window.location.href = 'ContactList.html';
+    })
+    .catch(error => {
+        console.error('Error updating contact:', error);
+        showError('更新失败: ' + error.message);
+        showLoading(false);
+    });
 }
 
 /**

@@ -52,6 +52,12 @@ function setupFormSubmission(ctId) {
         const date = document.getElementById("matterDate").value;
         const desc = document.getElementById("matterDescription").value;
 
+        // 验证事项描述长度不超过100
+        if (desc.length > 100) {
+            alert("事项描述长度不能超过100个字符"); // 或者使用你现有的错误提示方式
+            return;
+        }
+
         const formData = new FormData();
         formData.append("ctId", ctId);
         formData.append("matterDate", date);

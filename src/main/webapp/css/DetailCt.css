@@ -76,7 +76,7 @@ h1 {
 }
 /* Optional: Add an overlay icon for changing photo */
 .profile-photo-upload label::after {
-    content: '&#x21bb;'; /* Unicode for refresh/upload icon */
+    content: '\21bb'; /* Unicode for refresh/upload icon */
     font-size: 1.5em;
     color: white;
     background-color: rgba(0, 0, 0, 0.5);
